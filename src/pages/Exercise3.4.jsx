@@ -36,6 +36,8 @@ const Exercise2_3 = () => {
     const [score, setScore] = useState(0);
     const [hint, setHint] = useState('');
     const navigate = useNavigate();
+    const totalScore3 = parseInt(localStorage.getItem('totalScore3')) || 0;
+
 
     const expectedOptions = [
         '0-0-0-0-0-0-0',
@@ -50,8 +52,10 @@ const Exercise2_3 = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         
-        let newScore = 0;
-    
+        let sumScore = 0;
+        const incorrect = [];
+        const correct = [];
+        
         // ตรวจสอบว่าข้อมูลถูกกรอกครบหรือไม่
         if (
             !input1 || !input2 || !input3 || !expectedResult1 ||
@@ -66,7 +70,6 @@ const Exercise2_3 = () => {
             return;
         }
     
-        // ตรวจสอบว่าผลลัพธ์ Expected Results ไม่ซ้ำกัน
         const expectedResults = [
             expectedResult1, expectedResult2, expectedResult3, expectedResult4,
             expectedResult5, expectedResult6, expectedResult7
@@ -78,104 +81,72 @@ const Exercise2_3 = () => {
             return;
         }
     
-        // Convert inputs to numbers
-        const A1 = parseInt(input1);
-        const B1 = parseInt(input2);
-        const C1 = parseInt(input3);
+        const paths = {
+            row1: [parseInt(input1), parseInt(input2), parseInt(input3)],
+            row2: [parseInt(input4), parseInt(input5), parseInt(input6)],
+            row3: [parseInt(input7), parseInt(input8), parseInt(input9)],
+            row4: [parseInt(input10), parseInt(input11), parseInt(input12)],
+            row5: [parseInt(input13), parseInt(input14), parseInt(input15)],
+            row6: [parseInt(input16), parseInt(input17), parseInt(input18)],
+            row7: [parseInt(input19), parseInt(input20), parseInt(input21)]
+        };
     
-        const A2 = parseInt(input4);
-        const B2 = parseInt(input5);
-        const C2 = parseInt(input6);
+        const correctPaths = [
+            '1-2-3-4-15', '1-2-3-5-6-15', '1-2-3-5-7-15', 
+            '1-2-8-9-15', '1-2-8-10-11-15', '1-2-8-10-12-13-15', 
+            '1-2-8-10-12-14-15'
+        ];
     
-        const A3 = parseInt(input7);
-        const B3 = parseInt(input8);
-        const C3 = parseInt(input9);
+        const conditions = [
+            (A, B, C) => A > B && B > C,
+            (A, B, C) => A > B && B <= C,
+            (A, B, C) => A > B && B <= C && C < A,
+            (A, B, C) => A === B && B === C,
+            (A, B, C) => A === B && C !== A,
+            (A, B, C) => A < C && B < C,
+            () => true // แถวสุดท้ายไม่มีเงื่อนไขเฉพาะ
+        ];
     
-        const A4 = parseInt(input10);
-        const B4 = parseInt(input11);
-        const C4 = parseInt(input12);
-    
-        const A5 = parseInt(input13);
-        const B5 = parseInt(input14);
-        const C5 = parseInt(input15);
-    
-        const A6 = parseInt(input16);
-        const B6 = parseInt(input17);
-        const C6 = parseInt(input18);
-    
-        const A7 = parseInt(input19);
-        const B7 = parseInt(input20);
-        const C7 = parseInt(input21);
-    
-        // ตรวจสอบเงื่อนไขแถวแต่ละแถว และอัปเดตคะแนนเฉพาะแถวที่ตอบครบ
-        if (input1 && input2 && input3 && expectedResult1) {
-            if (A1 > B1 && B1 > C1 && expectedResult1 === '1-2-3-4-15') {
-                newScore += 2;
+        // ตรวจสอบและอัปเดตคะแนน
+        Object.entries(paths).forEach(([key, [A, B, C]], index) => {
+            if (conditions[index](A, B, C) && expectedResults[index] === correctPaths[index]) {
+                sumScore += 2;
+                correct.push({ question: key, userAnswer: `${A}-${B}-${C}`, correctAnswer: correctPaths[index] });
+            } else {
+                incorrect.push({ question: key, userAnswer: `${A}-${B}-${C}`, correctAnswer: correctPaths[index] });
             }
-        }
+        });
     
-        if (input4 && input5 && input6 && expectedResult2) {
-            if (A2 > B2 && B2 <= C2 && expectedResult2 === '1-2-3-5-6-15') {
-                newScore += 2;
-            }
-        }
+        setScore(sumScore);
     
-        if (input7 && input8 && input9 && expectedResult3) {
-            if (A3 > B3 && B3 <= C3 && C3 < A3 && expectedResult3 === '1-2-3-5-7-15') {
-                newScore += 2;
-            }
-        }
-    
-        if (input10 && input11 && input12 && expectedResult4) {
-            if (A4 === B4 && B4 === C4 && expectedResult4 === '1-2-8-9-15') {
-                newScore += 2;
-            }
-        }
-    
-        if (input13 && input14 && input15 && expectedResult5) {
-            if (A5 === B5 && C5 !== A5 && expectedResult5 === '1-2-8-10-11-15') {
-                newScore += 2;
-            }
-        }
-    
-        if (input16 && input17 && input18 && expectedResult6) {
-            if (A6 < C6 && B6 < C6 && expectedResult6 === '1-2-8-10-12-13-15') {
-                newScore += 2;
-            }
-        }
-    
-        if (input19 && input20 && input21 && expectedResult7) {
-            if (expectedResult7 === '1-2-8-10-12-14-15') {
-                newScore += 2;
-            }//ยังมีปัญหาในการเช็คค่าเงื่อนไขสุดท้าย
-        }
-    
-        setScore(newScore);
-    
-        // กำหนดข้อความแจ้งเตือนถ้าคะแนนไม่ถึงหรือผลลัพธ์ไม่ถูกต้อง
-        if (newScore < 14) {
+        if (sumScore < 14) {
             setHint('ลองตรวจสอบผลลัพธ์ที่คาดหวังใหม่อีกครั้ง');
         } else {
             setHint('คุณตอบถูกทั้งหมดแล้ว!');
         }
     
-        // อัปเดตคะแนนรวม
-        const totalScore = previousScore + newScore;
-        localStorage.setItem('totalScore', totalScore);
+        const updatedScore = totalScore3 + sumScore;
+        localStorage.setItem('totalScore3', updatedScore);
+        localStorage.setItem('incorrectAnswers3', JSON.stringify(incorrect));
+        localStorage.setItem('correctAnswers3', JSON.stringify(correct));
     
-        // นำทางไปหน้าผลลัพธ์
-        navigate('/result', { state: { score: totalScore, nextPage: '/Exercise3.5' } });
+        navigate('/result', {
+            state: {
+                score: sumScore,
+                incorrectAnswers: incorrect,
+                correctAnswers: correct,
+                nextPage: '/Exercise3.5',
+                correctPaths: correctPaths,
+                userPaths: paths
+            }
+        });
     };
     
-    
-    
-
-
     return (
         <div style={styles.container}>
             <div style={styles.headerContainer}>
                 <h1 style={styles.header}>Software Testing Training</h1>
-                <div style={styles.scoreBox}>Score: {previousScore}</div> 
+                <div style={styles.scoreBox}>Score: {totalScore3}</div> 
             </div>
             <h3  style={{fontSize: '40px',fontFamily: 'Arial, sans-serif'}}>ข้อ 3.4 Basis Path Testing</h3>
             <div style={styles.question}>
@@ -191,11 +162,11 @@ const Exercise2_3 = () => {
                 6. ถ้า a &lt; c และ b &lt; c ให้คำนวณผลลัพธ์เป็น a - b + c<br/>
                 7. หากไม่ตรงกับเงื่อนไขใด ๆ ข้างต้น ให้คำนวณผลลัพธ์เป็น a + b * c<br/>
             </p>
-      <p> : ให้ตอบค่าที่คิดว่า Testcase นั้นจะวิ่งไป แล้วกด Submit</p>
             </div>
-
-            <button style={styles.hintButton}>คำใบ้</button>
-
+            <div style={styles.headerContainer}>
+                <h1 style={styles.description}> คำอธิบาย : ให้ตอบค่าที่คิดว่า Testcase นั้นจะวิ่งไป แล้วกด Submit</h1>
+                <button style={styles.hintButton}>คำใบ้</button>
+            </div>
             <form onSubmit={handleSubmit}>
                 <table style={styles.table}>
                     <thead>
@@ -212,7 +183,7 @@ const Exercise2_3 = () => {
                             <td style={styles.th_td}>TC 01</td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={input1} 
                                     onChange={(e) => setInput1(e.target.value)} 
                                     placeholder=""
@@ -221,7 +192,7 @@ const Exercise2_3 = () => {
                             </td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={input2} 
                                     onChange={(e) => setInput2(e.target.value)} 
                                     placeholder=""
@@ -230,7 +201,7 @@ const Exercise2_3 = () => {
                             </td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={input3} 
                                     onChange={(e) => setInput3(e.target.value)} 
                                     placeholder=""
@@ -254,7 +225,7 @@ const Exercise2_3 = () => {
                             <td style={styles.th_td}>TC 02</td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={input4} 
                                     onChange={(e) => setInput4(e.target.value)} 
                                     placeholder=""
@@ -263,7 +234,7 @@ const Exercise2_3 = () => {
                             </td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={input5} 
                                     onChange={(e) => setInput5(e.target.value)} 
                                     placeholder=""
@@ -272,7 +243,7 @@ const Exercise2_3 = () => {
                             </td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={input6} 
                                     onChange={(e) => setInput6(e.target.value)} 
                                     placeholder=""
@@ -296,7 +267,7 @@ const Exercise2_3 = () => {
                             <td style={styles.th_td}>TC 03</td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={input7} 
                                     onChange={(e) => setInput7(e.target.value)} 
                                     placeholder=""
@@ -305,7 +276,7 @@ const Exercise2_3 = () => {
                             </td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={input8} 
                                     onChange={(e) => setInput8(e.target.value)} 
                                     placeholder=""
@@ -314,7 +285,7 @@ const Exercise2_3 = () => {
                             </td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={input9} 
                                     onChange={(e) => setInput9(e.target.value)} 
                                     placeholder=""
@@ -338,7 +309,7 @@ const Exercise2_3 = () => {
                             <td style={styles.th_td}>TC 04</td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={input10} 
                                     onChange={(e) => setInput10(e.target.value)} 
                                     placeholder=""
@@ -347,7 +318,7 @@ const Exercise2_3 = () => {
                             </td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={input11} 
                                     onChange={(e) => setInput11(e.target.value)} 
                                     placeholder=""
@@ -356,7 +327,7 @@ const Exercise2_3 = () => {
                             </td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={input12} 
                                     onChange={(e) => setInput12(e.target.value)} 
                                     placeholder=""
@@ -380,7 +351,7 @@ const Exercise2_3 = () => {
                             <td style={styles.th_td}>TC 05</td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={input13} 
                                     onChange={(e) => setInput13(e.target.value)} 
                                     placeholder=""
@@ -389,7 +360,7 @@ const Exercise2_3 = () => {
                             </td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={input14} 
                                     onChange={(e) => setInput14(e.target.value)} 
                                     placeholder=""
@@ -398,7 +369,7 @@ const Exercise2_3 = () => {
                             </td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={input15} 
                                     onChange={(e) => setInput15(e.target.value)} 
                                     placeholder=""
@@ -422,7 +393,7 @@ const Exercise2_3 = () => {
                             <td style={styles.th_td}>TC 06</td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={input16} 
                                     onChange={(e) => setInput16(e.target.value)} 
                                     placeholder=""
@@ -431,7 +402,7 @@ const Exercise2_3 = () => {
                             </td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={input17} 
                                     onChange={(e) => setInput17(e.target.value)} 
                                     placeholder=""
@@ -440,7 +411,7 @@ const Exercise2_3 = () => {
                             </td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={input18} 
                                     onChange={(e) => setInput18(e.target.value)} 
                                     placeholder=""
@@ -464,7 +435,7 @@ const Exercise2_3 = () => {
                             <td style={styles.th_td}>TC 07</td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={input19} 
                                     onChange={(e) => setInput19(e.target.value)} 
                                     placeholder=""
@@ -473,7 +444,7 @@ const Exercise2_3 = () => {
                             </td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={input20} 
                                     onChange={(e) => setInput20(e.target.value)} 
                                     placeholder=""
@@ -482,7 +453,7 @@ const Exercise2_3 = () => {
                             </td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={input21} 
                                     onChange={(e) => setInput21(e.target.value)} 
                                     placeholder=""
@@ -550,6 +521,12 @@ const styles = {
         fontSize: '25px',
         fontFamily: 'Arial, sans-serif',
     },
+    description: {
+        padding: '10px 20px',
+        borderRadius: '5px',
+        fontSize: '30px',
+        fontFamily: 'Arial, sans-serif',
+      },
     hintButton: {
         backgroundColor: '#0a3d3d',
         color: '#fff',

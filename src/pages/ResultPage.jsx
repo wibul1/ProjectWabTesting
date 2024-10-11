@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 const ResultPage = () => {
   const location = useLocation();
-  const { score, nextPage } = location.state || { score: 0, nextPage: '/Exercise1_2' };
+  const { score, correctAnswers = [], incorrectAnswers = [], nextPage } = location.state || {};
   const navigate = useNavigate();
 
   // สมมติว่าคุณต้องการสะสมคะแนนทั้งหมด
@@ -21,8 +21,36 @@ const ResultPage = () => {
   return (
     <div style={styles.container}>
       <div style={styles.scoreBox}>
-        <p style={styles.title}>คะแนนรวมตอนนี้</p>
+        <p style={styles.title}>คะแนนที่คุณได้</p>
         <p style={styles.score}>{score} คะแนน</p>
+      </div >
+      <div style={styles.correctBox}>
+        <h2>คำตอบที่ถูกต้อง</h2>
+        {correctAnswers.length > 0 ? (
+          <ul>
+            {correctAnswers.map((answer, index) => (
+              <li key={index}>
+                {answer.group} คำตอบที่ {answer.index}: คุณตอบ "{answer.userAnswer}" (ถูกต้อง)
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>ไม่มีคำตอบที่ถูกต้อง</p>
+        )}
+      </div>
+      <div style={styles.incorrectBox}>
+        <h2>คำตอบที่ไม่ถูกต้อง</h2>
+        {incorrectAnswers.length > 0 ? (
+          <ul>
+            {incorrectAnswers.map((answer, index) => (
+              <li key={index}>
+                {answer.group} คำตอบที่ {answer.index}: คุณตอบ "{answer.userAnswer}" (คำตอบที่ถูกต้อง: "{answer.correctAnswer}")
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>ตอบถูกทุกข้อ!</p>
+        )}
       </div>
       <button style={styles.nextButton} onClick={handleNext}>Next</button>
     </div>
@@ -33,7 +61,7 @@ const styles = {
   container: {
     backgroundColor: '#dbe6c1',
     padding: '20px',
-    maxWidth: '800px',
+    maxWidth: '80%',
     margin: '80px auto',
     textAlign: 'center',
     borderRadius: '10px',
@@ -41,7 +69,7 @@ const styles = {
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '400px',
+    height: '90%',
   },
   scoreBox: {
     backgroundColor: '#0a3d3d',
@@ -67,6 +95,26 @@ const styles = {
     cursor: 'pointer',
     fontSize: '26px',
     border: 'none',
+  },
+  correctBox: {
+    // backgroundColor: '#f8d7da',
+    color: '#0a3d3d',
+    padding: '20px',
+    borderRadius: '10px',
+    marginBottom: '20px',
+    width: '800px',
+    fontSize: '25px',
+    fontFamily: 'Arial, sans-serif',
+  },
+  incorrectBox: {
+    // backgroundColor: '#f8d7da',
+    color: '#721c24',
+    padding: '20px',
+    borderRadius: '10px',
+    marginBottom: '20px',
+    width: '800px',
+    fontSize: '25px',
+    fontFamily: 'Arial, sans-serif',
   },
 };
 

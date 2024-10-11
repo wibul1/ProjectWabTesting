@@ -11,6 +11,8 @@ const Exercise2_1 = () => {
     input4: '',
   });
   const [score, setScore] = useState(0);
+  const [incorrectAnswers, setIncorrectAnswers] = useState([]); // บันทึกคำตอบที่ผิดพร้อมกับคำเฉลย
+  const [correctAnswersList, setCorrectAnswersList] = useState([]); // บันทึกคำตอบที่ถูกต้อง
 
   const correctAnswers = {
     input0: 'include',
@@ -29,21 +31,32 @@ const Exercise2_1 = () => {
   };
 
   const handleSubmit = () => {
-    let newScore = 0;
+    let sumScore = 0;
+    const incorrect = [];
+    const correct = [];
+
     Object.keys(correctAnswers).forEach((key) => {
       if (inputValues[key].trim() === correctAnswers[key]) {
-        newScore += 2; // ให้คะแนน 2 คะแนนต่อคำตอบที่ถูกต้อง
+        sumScore += 2; // ให้คะแนน 2 คะแนนต่อคำตอบที่ถูกต้อง
+        correct.push({ question: key, userAnswer: inputValues[key] });
+      } else {
+        incorrect.push({ question: key, userAnswer: inputValues[key], correctAnswer: correctAnswers[key] });
       }
     });
     
     // ดึงคะแนนสะสมก่อนหน้านี้จาก LocalStorage
-    const previousScore = parseInt(localStorage.getItem('totalScore') || '0', 10);
+    const previousScore = parseInt(localStorage.getItem('totalScore2') || '0', 10);
   
     // บันทึกคะแนนรวมใหม่ลงใน LocalStorage
-    localStorage.setItem('totalScore', previousScore + newScore);
+    localStorage.setItem('totalScore2', previousScore + sumScore);
+    localStorage.setItem('incorrectAnswers2', JSON.stringify(incorrect)); // เก็บคำตอบที่ผิด
+    localStorage.setItem('correctAnswers2', JSON.stringify(correct)); // เก็บคำตอบที่ถูก
     
-    setScore(newScore);
-    navigate('/result', { state: { score: newScore, nextPage: '/Exercise2.2' ,totalScore: newScore} });
+    setScore(sumScore);
+    setIncorrectAnswers(incorrect);
+    setCorrectAnswersList(correct);
+
+    navigate('/result', { state: { score: sumScore, incorrectAnswers: incorrect, correctAnswers: correct, nextPage: '/Exercise2.2', totalScore1: sumScore } });
   };
   
 
@@ -51,7 +64,7 @@ const Exercise2_1 = () => {
     <div style={styles.container}>
       <div style={styles.headerContainer}>
         <h1 style={styles.header}>Software Testing Training</h1>
-        <div style={styles.scoreBox}>Score</div>
+        <div style={styles.scoreBox}>Score 0</div>
       </div>
       <h3  style={{fontSize: '40px',fontFamily: 'Arial, sans-serif'}}>ข้อ 2.1 Boundary Value Analysis</h3>
       <div style={styles.question}>
@@ -61,12 +74,11 @@ const Exercise2_1 = () => {
         หากค่าที่กรอกอยู่นอกช่วง 1 ถึง 100 โปรแกรมจะแสดงข้อความว่า "Error" <br/>
         โปรแกรมนี้ทำงานกับตัวเลขจำนวนเต็มเท่านั้น
         </p>
-        <p>: ให้เติมคำจากโค้ดที่เว้นช่องว่างให้ แล้วกด Submit</p>
-
       </div>
-
-      <button style={styles.hintButton}>คำใบ้</button>
-
+      <div style={styles.headerContainer}>
+            <h1 style={styles.description}> คำอธิบาย : ให้เติมคำจากโค้ดที่เว้นช่องว่างให้ แล้วกด Submitt </h1>
+            <button style={styles.hintButton}>คำใบ้</button>
+      </div>
       <div style={styles.codeBox}>
         <p>#<input type="text" name="input0" value={inputValues.input0} onChange={handleInputChange} style={styles.input}/> &#60;stdio.h&#62;</p>
         <p>int main() &#123;</p>
@@ -122,6 +134,12 @@ const styles = {
     borderRadius: '5px',
     marginBottom: '15px',
     fontSize: '25px',
+    fontFamily: 'Arial, sans-serif',
+  },
+  description: {
+    padding: '10px 20px',
+    borderRadius: '5px',
+    fontSize: '30px',
     fontFamily: 'Arial, sans-serif',
   },
   hintButton: {

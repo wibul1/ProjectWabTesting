@@ -6,68 +6,75 @@ const Exercise2_2 = () => {
   const { score: previousScore = 0 } = location.state || {};
   const [minValues, setMinValues] = useState(['', '', '']);
   const [maxValues, setMaxValues] = useState(['', '', '']);
+  const totalScore2 = parseInt(localStorage.getItem('totalScore2')) || 0;
 
   const navigate = useNavigate();
 
-  // ฟังก์ชัน handleInputChange ที่แก้ไข
   const handleInputChange = (setter, values, index, value) => {
-    const newValues = [...values];  // คัดลอก array เดิม
-    newValues[index] = value;  // อัปเดตค่าในตำแหน่งที่ระบุ
-    setter(newValues);  // เซ็ตค่าใหม่ให้กับ state
+    const newValues = [...values];
+    newValues[index] = value;
+    setter(newValues);
   };
 
-  // ฟังก์ชันเช็คค่า min
-  const validateMin = (value, index) => {
-    const num = parseInt(value);
-    if (index === 0 && num === 0) return true;
-    if (index === 1 && num === 1) return true;
-    if (index === 2 && num === 2) return true;
-    return false;
-  };
+  const correctMinValues = [0, 1, 2];
+  const correctMaxValues = [99, 100, 101];
 
-  // ฟังก์ชันเช็คค่า max
-  const validateMax = (value, index) => {
-    const num = parseInt(value);
-    if (index === 0 && num === 99) return true;
-    if (index === 1 && num === 100) return true;
-    if (index === 2 && num === 101) return true;
-    return false;
-  };
+  const validateMin = (value, index) => parseInt(value) === correctMinValues[index];
+  const validateMax = (value, index) => parseInt(value) === correctMaxValues[index];
 
   const handleSubmit = () => {
-    // ตรวจสอบค่า min
-    const minScore = minValues.filter((value, index) => validateMin(value, index)).length * 2;
+    const correctAnswers = { min: [], max: [] };
+    const incorrectAnswers = { min: [], max: [] };
 
-    // ตรวจสอบค่า max
-    const maxScore = maxValues.filter((value, index) => validateMax(value, index)).length * 2;
+    minValues.forEach((value, index) => {
+      if (validateMin(value, index)) {
+        correctAnswers.min.push({ index, userAnswer: value });
+      } else {
+        incorrectAnswers.min.push({ index, userAnswer: value, correctAnswer: correctMinValues[index] });
+      }
+    });
 
-    // คำนวณคะแนนรวม
-    const totalScore = previousScore + minScore + maxScore;
-    localStorage.setItem('totalScore', totalScore);
+    maxValues.forEach((value, index) => {
+      if (validateMax(value, index)) {
+        correctAnswers.max.push({ index, userAnswer: value });
+      } else {
+        incorrectAnswers.max.push({ index, userAnswer: value, correctAnswer: correctMaxValues[index] });
+      }
+    });
 
-    // นำไปสู่หน้าผลลัพธ์
-    navigate('/result', { state: { score: totalScore, nextPage: '/Exercise2.3' } });
+    const sumScore = (correctAnswers.min.length + correctAnswers.max.length) * 2;
+    const updatedScore = totalScore2 + sumScore;
+    localStorage.setItem('totalScore2', updatedScore);
+
+    navigate('/result', {
+      state: {
+        score: sumScore,
+        nextPage: '/Exercise2.3',
+        correctAnswers: [...correctAnswers.min, ...correctAnswers.max],
+        incorrectAnswers: [...incorrectAnswers.min, ...incorrectAnswers.max],
+      },
+    });
   };
 
   return (
     <div style={styles.container}>
       <div style={styles.headerContainer}>
         <h1 style={styles.header}>Software Testing Training</h1>
-        <div style={styles.scoreBox}>Score: {previousScore}</div>
+        <div style={styles.scoreBox}>Score: {totalScore2}</div>
       </div>
-      <h3  style={{fontSize: '40px',fontFamily: 'Arial, sans-serif'}}>ข้อ 2.2 Boundary Value Analysis</h3>
+      <h3 style={{ fontSize: '40px', fontFamily: 'Arial, sans-serif' }}>ข้อ 2.2 Boundary Value Analysis</h3>
       <div style={styles.question}>
-      <h3 style={{fontSize: '40px',fontFamily: 'Arial, sans-serif'}}>Requirement</h3>
-      <p>
-        โปรแกรมหนึ่งรับค่าอินพุตเป็นตัวเลขระหว่าง 1 ถึง 100 เพื่อคำนวณตัวเลข (X * X) <br/>
-        หากค่าที่กรอกอยู่นอกช่วง 1 ถึง 100 โปรแกรมจะแสดงข้อความว่า "Error" <br/>
-        โปรแกรมนี้ทำงานกับตัวเลขจำนวนเต็มเท่านั้น
+        <h3 style={{ fontSize: '40px', fontFamily: 'Arial, sans-serif' }}>Requirement</h3>
+        <p>
+          โปรแกรมหนึ่งรับค่าอินพุตเป็นตัวเลขระหว่าง 1 ถึง 100 เพื่อคำนวณตัวเลข (X * X) <br />
+          หากค่าที่กรอกอยู่นอกช่วง 1 ถึง 100 โปรแกรมจะแสดงข้อความว่า "Error" <br />
+          โปรแกรมนี้ทำงานกับตัวเลขจำนวนเต็มเท่านั้น
         </p>
-        <p> : ให้เติมค่าที่คิดว่าอยู่ในช่วง min max แล้วกด Submit</p>
       </div>
-
-      <button style={styles.hintButton}>คำใบ้</button>
-
+      <div style={styles.headerContainer}>
+        <h1 style={styles.description}>คำอธิบาย: ให้เติมค่าที่คิดว่าอยู่ในช่วง min max แล้วกด Submit</h1>
+        <button style={styles.hintButton}>คำใบ้</button>
+      </div>
       <div style={styles.inputContainer}>
         <div style={styles.labelRow}>
           <span>Min</span>
@@ -81,9 +88,7 @@ const Exercise2_2 = () => {
                 type="number"
                 placeholder={`Min ${index + 1}`}
                 value={minValues[index]}
-                onChange={(e) =>
-                  handleInputChange(setMinValues, minValues, index, e.target.value)
-                }
+                onChange={(e) => handleInputChange(setMinValues, minValues, index, e.target.value)}
                 style={styles.input}
               />
             </div>
@@ -92,9 +97,7 @@ const Exercise2_2 = () => {
                 type="number"
                 placeholder={`Max ${index + 1}`}
                 value={maxValues[index]}
-                onChange={(e) =>
-                  handleInputChange(setMaxValues, maxValues, index, e.target.value)
-                }
+                onChange={(e) => handleInputChange(setMaxValues, maxValues, index, e.target.value)}
                 style={styles.input}
               />
             </div>
@@ -146,6 +149,12 @@ const styles = {
     fontSize: '25px',
     fontFamily: 'Arial, sans-serif',
   },
+  description: {
+    padding: '10px 20px',
+    borderRadius: '5px',
+    fontSize: '30px',
+    fontFamily: 'Arial, sans-serif',
+  },
   hintButton: {
     backgroundColor: '#0a3d3d',
     color: 'white',
@@ -157,12 +166,16 @@ const styles = {
     fontFamily: 'Arial, sans-serif',
   },
   inputContainer: {
+    backgroundColor: '#0a3d3d',
+    padding: '10px',
+    borderRadius: '5px',
     display: 'flex',
     flexDirection: 'column',
     gap: '20px',
   },
   labelRow: {
     display: 'flex',
+    color: 'white',
     justifyContent: 'space-around',
     marginBottom: '10px',
     fontWeight: 'bold',
@@ -172,13 +185,13 @@ const styles = {
   row: {
     display: 'flex',
     alignItems: 'center',
-    gap: '350px',
+    gap: '400px',
   },
   inputWrapper: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    margin: '0px 0px 0px 300px'
+    margin: '0px 0px 0px 400px',
   },
   input: {
     backgroundColor: '#f0f0f0',

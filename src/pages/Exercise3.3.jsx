@@ -4,25 +4,33 @@ import { useNavigate, useLocation } from 'react-router-dom';
 const Exercise3_3 = () => {
   const location = useLocation();
   const { score: previousScore = 0 } = location.state || {};
+  const [score, setScore] = useState(0);
   const [paths, setPaths] = useState({ path1: '', path2: '', path3: '' });
   const [totalPaths, setTotalPaths] = useState('');
-  const [error, setError] = useState(''); // เพิ่ม state สำหรับเก็บข้อความแจ้งเตือน
+  const [error, setError] = useState('');
   const navigate = useNavigate();
+  const totalScore3 = parseInt(localStorage.getItem('totalScore3')) || 0;
 
-  const correctTotalPaths = 7; // จำนวนเส้นทางที่ถูกต้อง (เปลี่ยนตามจริงได้)
-  const correctPaths = ['1-2-3-4-15', '1-2-3-5-6-15', '1-2-3-5-7-15', '1-2-8-9-15', '1-2-8-10-11-15', '1-2-8-10-12-13-15', '1-2-8-10-12-14-15']; // ตัวอย่างเส้นทางที่ถูกต้อง
+  const correctTotalPaths = 7;
+  const correctPaths = [
+    '1-2-3-4-15', 
+    '1-2-3-5-6-15', 
+    '1-2-3-5-7-15', 
+    '1-2-8-9-15', 
+    '1-2-8-10-11-15', 
+    '1-2-8-10-12-13-15', 
+    '1-2-8-10-12-14-15'
+  ];
 
- // ฟังก์ชันสำหรับอัพเดตค่า input
-const handleInputChange = (e) => {
-  setPaths({ ...paths, [e.target.name]: e.target.value });
-  setError(''); // เคลียร์ข้อความแจ้งเตือนเมื่อมีการกรอกข้อมูลใหม่
-};
+  const handleInputChange = (e) => {
+    setPaths({ ...paths, [e.target.name]: e.target.value });
+    setError('');
+  };
 
-const handleTotalPathsChange = (e) => {
-  setTotalPaths(e.target.value);
-  setError(''); // เคลียร์ข้อความแจ้งเตือนเมื่อมีการกรอกข้อมูลใหม่
-};
-
+  const handleTotalPathsChange = (e) => {
+    setTotalPaths(e.target.value);
+    setError('');
+  };
 
   const checkDuplicatePaths = () => {
     const uniquePaths = new Set(Object.values(paths));
@@ -30,100 +38,128 @@ const handleTotalPathsChange = (e) => {
   };
 
   const handleSubmit = () => {
-    let score = previousScore;
-    let incorrectPaths = []; // เก็บเส้นทางที่ไม่ถูกต้อง
+    let sumScore = 0;
+    const incorrect = [];
+    const correct = [];
+    const pathResult = { path1: '', path2: '', path3: '' };
   
-    // เช็คว่ามีการกรอกเส้นทางซ้ำหรือไม่
     if (checkDuplicatePaths()) {
       setError('กรุณากรอกเส้นทางที่ไม่ซ้ำกัน');
       return;
     }
   
-    // เช็คจำนวนเส้นทางที่กรอกว่าถูกต้องไหม
-    if (parseInt(totalPaths) === correctTotalPaths) {
-      score += 2;
+    // เช็คจำนวนเส้นทางที่กรอก
+    const totalPathsResult = parseInt(totalPaths) === correctTotalPaths ? 'ถูกต้อง' : 'ไม่ถูกต้อง';
+    if (totalPathsResult === 'ถูกต้อง') {
+      sumScore += 2;
+      correct.push({ question: 'totalPaths', userAnswer: totalPaths }); // เก็บค่าที่ถูกต้อง
+    } else {
+      incorrect.push({ question: 'totalPaths', userAnswer: totalPaths, correctAnswer: correctTotalPaths });
     }
   
-    // เช็คแต่ละเส้นทางที่กรอกว่าถูกต้องไหม
-    Object.values(paths).forEach((path) => {
+    // เช็คเส้นทางที่กรอก
+    Object.entries(paths).forEach(([key, path]) => {
       if (correctPaths.includes(path)) {
-        score += 2; // ได้คะแนนเพิ่มถ้าตรงกับเส้นทางที่ถูกต้อง
+        sumScore += 2;
+        pathResult[key] = 'ถูกต้อง';
+        correct.push({ question: key, userAnswer: path });
       } else {
-        incorrectPaths.push(path); // เก็บเส้นทางที่ไม่ถูกต้อง
+        pathResult[key] = 'ไม่ถูกต้อง';
+        incorrect.push({ question: key, userAnswer: path, correctAnswer: correctPaths }); // แสดงคำตอบที่ถูกต้อง
       }
     });
   
-    // หากมีเส้นทางที่ไม่ถูกต้อง แสดงข้อความแจ้งเตือน
-    if (incorrectPaths.length > 0) {
-      setError(`เส้นทางที่ไม่ถูกต้อง: ${incorrectPaths.join(', ')}`);
-      return; // หยุดการทำงานหากมีเส้นทางไม่ถูกต้อง
-    }
+    // อัพเดตคะแนนใน localStorage
+    const updatedScore = totalScore3 + sumScore;
+    localStorage.setItem('totalScore3', updatedScore);
+    localStorage.setItem('incorrectAnswers3', JSON.stringify(incorrect));
+    localStorage.setItem('correctAnswers3', JSON.stringify(correct));
   
-    // เก็บคะแนนใน localStorage และนำไปสู่หน้าผลลัพธ์
-    localStorage.setItem('totalScore', score);
-    navigate('/result', { state: { score, nextPage: '/Exercise3.4' } });
+    // ส่งข้อมูลไปยัง ResultPage
+    navigate('/result', {
+      state: {
+        score: sumScore,
+        incorrectAnswers: incorrect,
+        correctAnswers: correct,
+        nextPage: '/Exercise3.4',
+        correctPaths: correctPaths, // ส่งเส้นทางที่ถูกต้องทั้งหมดไปยัง ResultPage
+        userPaths: paths // ส่งเส้นทางที่ผู้ใช้กรอกไปยัง ResultPage
+      }
+    });
   };
   
 
   return (
     <div style={styles.container}>
       <div style={styles.headerContainer}>
-      <h1 style={styles.header}>Software Testing Training</h1>
-        <div style={styles.scoreBox}>Score {previousScore}</div>
+        <h1 style={styles.header}>Software Testing Training</h1>
+        <div style={styles.scoreBox}>Score {totalScore3}</div>
       </div>
-      <h3  style={{fontSize: '40px',fontFamily: 'Arial, sans-serif'}}>ข้อ 3.3 Basis Path Testing</h3>
+      <h3 style={{ fontSize: '40px', fontFamily: 'Arial, sans-serif' }}>ข้อ 3.3 Basis Path Testing</h3>
       <div style={styles.question}>
-      <h3 style={{fontSize: '40px',fontFamily: 'Arial, sans-serif'}}>Requirement</h3>
-
-        <p>: จากข้อ 3.2 ต้องการให้ตอบถูกจำนวนเส้นทางที่เป็นไปได้ทั้งหมดและยกตัวอย่าง 3 เส้นทาง</p>
-
-        <div style={styles.tree}>
-          <img
-            src="https://firebasestorage.googleapis.com/v0/b/project-d9486.appspot.com/o/L%2Fpath.png?alt=media&token=af7d1574-64c3-4a58-8e8a-11ef90a13efe"
-            alt="Path Diagram"
-            style={styles.image}
-          />
-
-          <h3>คำตอบของคุณ</h3>
-          <div>ใส่จำนวนเส้นทางที่ถูกต้อง</div>
-          <input type="text" value={totalPaths} onChange={handleTotalPathsChange} style={styles.input} />
-
-          <div>ยกตัวอย่างเส้นทางที่เป็นไปได้ 3 เส้นทาง</div>
-          <input
-            type="text"
-            name="path1"
-            value={paths.path1}
-            onChange={handleInputChange}
-            placeholder="เส้นทางที่ 1"
-            style={styles.input}
-          />
-          <input
-            type="text"
-            name="path2"
-            value={paths.path2}
-            onChange={handleInputChange}
-            placeholder="เส้นทางที่ 2"
-            style={styles.input}
-          />
-          <input
-            type="text"
-            name="path3"
-            value={paths.path3}
-            onChange={handleInputChange}
-            placeholder="เส้นทางที่ 3"
-            style={styles.input}
-          />
-          {error && <div style={styles.error}>{error}</div>} {/* แสดงข้อความแจ้งเตือนถ้ามี */}
+        <div style={styles.row}>
+          <div style={styles.leftSide}>
+            <img
+              src="https://firebasestorage.googleapis.com/v0/b/project-d9486.appspot.com/o/L%2Fpath.png?alt=media&token=af7d1574-64c3-4a58-8e8a-11ef90a13efe"
+              alt="Path Diagram"
+              style={styles.image}
+            />
+          </div>
+          <div style={styles.rightSide}>
+            <h3 style={{ fontSize: '40px', fontFamily: 'Arial, sans-serif' }}>Requirement</h3>
+            <p>
+              ให้โปรแกรมรับอินพุตเป็นจำนวนเต็ม 3 ค่า a, b, และ c <br />
+              และทำการตรวจสอบและคำนวณผลลัพธ์ตามเงื่อนไขที่ซับซ้อนขึ้นดังนี้: <br />
+              1. ถ้า a &gt; b และ b &gt; c ให้คำนวณผลลัพธ์เป็น a + b + c<br />
+              2. ถ้า a &gt; b และ c &gt; a ให้คำนวณผลลัพธ์เป็น a * b * c<br />
+              3. ถ้า a &gt; b และไม่เข้า 2 เงื่อนไขข้างบน ให้คำนวณผลลัพธ์เป็น a - b - c<br />
+              4. ถ้า a == b และ b == c ให้คำนวณผลลัพธ์เป็น a * 2<br />
+              5. ถ้า a == b และ c != a ให้คำนวณผลลัพธ์เป็น (a + b) * c<br />
+              6. ถ้า a &lt; c และ b &lt; c ให้คำนวณผลลัพธ์เป็น a - b + c<br />
+              7. หากไม่ตรงกับเงื่อนไขใด ๆ ข้างต้น ให้คำนวณผลลัพธ์เป็น a + b * c<br />
+            </p>
+            <div style={styles.headerContainer}>
+              <h1 style={styles.description}>คำอธิบาย: ต้องการให้ตอบถูกจำนวนเส้นทางที่เป็นไปได้ทั้งหมดและยกตัวอย่าง 3 เส้นทาง</h1>
+              <button style={styles.hintButton}>คำใบ้</button>
+            </div>
+            <h3 style={{ fontSize: '30px', fontFamily: 'Arial, sans-serif' }}>คำตอบของคุณ</h3>
+            <div style={{ fontSize: '30px', fontFamily: 'Arial, sans-serif' }}>ใส่จำนวนเส้นทางที่ถูกต้อง</div>
+            <input type="number" value={totalPaths} onChange={handleTotalPathsChange} style={styles.input} />
+            <div style={{ fontSize: '30px', fontFamily: 'Arial, sans-serif' }}>ยกตัวอย่างเส้นทางที่เป็นไปได้ 3 เส้นทาง</div>
+            <input
+              type="text"
+              name="path1"
+              value={paths.path1}
+              onChange={handleInputChange}
+              placeholder="เส้นทางที่ 1 ตัวอย่างการตอบ 1-2-3-4-5"
+              style={styles.input}
+            />
+            <input
+              type="text"
+              name="path2"
+              value={paths.path2}
+              onChange={handleInputChange}
+              placeholder="เส้นทางที่ 2 ตัวอย่างการตอบ 1-2-3-4-5"
+              style={styles.input}
+            />
+            <input
+              type="text"
+              name="path3"
+              value={paths.path3}
+              onChange={handleInputChange}
+              placeholder="เส้นทางที่ 3 ตัวอย่างการตอบ 1-2-3-4-5"
+              style={styles.input}
+            />
+            {error && <div style={styles.error}>{error}</div>}
+          </div>
         </div>
       </div>
-
       <button style={styles.submitBtn} onClick={handleSubmit}>
         Submit
       </button>
     </div>
   );
 };
-
 // Styles
 const styles = {
   container: {
@@ -133,6 +169,7 @@ const styles = {
     borderRadius: '10px',
   },
   headerContainer: {
+    // backgroundColor: '#ffffff',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -162,12 +199,59 @@ const styles = {
     fontSize: '25px',
     fontFamily: 'Arial, sans-serif',
   },
+  description: {
+    padding: '10px 20px',
+    borderRadius: '5px',
+    fontSize: '30px',
+    fontFamily: 'Arial, sans-serif',
+  },
+  hintButton: {
+    backgroundColor: '#0a3d3d',
+    color: 'white',
+    padding: '10px',
+    width: '180px',
+    borderRadius: '5px',
+    marginBottom: '15px',
+    cursor: 'pointer',
+    fontSize: '30px',
+    fontFamily: 'Arial, sans-serif',
+  },
+  row: {
+    display: 'flex',
+    flexDirection: 'row',
+    fontFamily: 'Arial, sans-serif',
+  },
+  leftSide: {
+    flex: 2,
+    padding: '20px',
+    borderRadius: '10px',
+    marginRight: '20px',
+    textAlign: 'left',
+    backgroundColor: '#ffffff',
+    
+  },
+  rightSide: {
+    flex: 2,
+    padding: '20px',
+    borderRadius: '10px',
+    textAlign: 'left',
+  },
+  image: {
+    width: '80%',
+    maxWidth: '600px', // จำกัดขนาดความกว้างของรูปภาพ
+    height: 'auto',
+    marginBottom: '20px',
+    borderRadius: '10px',
+    border: '2px solid #2f4f4f',
+  },
   input: {
     width: '50%',
     padding: '10px',
     margin: '10px 0',
     borderRadius: '5px',
-    border: '2px solid #2f4f4f'
+    border: '2px solid #2f4f4f',
+    fontSize: '25px',
+    fontFamily: 'Arial, sans-serif',
   },
   submitBtn: {
     backgroundColor: '#2f4f4f',
@@ -176,20 +260,14 @@ const styles = {
     border: 'none',
     borderRadius: '5px',
     fontSize: '18px',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    fontSize: '30px',
+    fontFamily: 'Arial, sans-serif',
   },
-  tree: {
-    marginBottom: '20px',
-    textAlign: 'center'
-  },
-  image: {
-    width: '80%',
-    maxWidth: '600px', // จำกัดขนาดความกว้างของรูปภาพ
-    height: 'auto',
-    marginBottom: '20px',
-    borderRadius: '10px',
-    border: '2px solid #2f4f4f'
-  },
+  // tree: {
+  //   marginBottom: '20px',
+  //   textAlign: 'center'
+  // },
   error: {
     color: 'red',
     marginTop: '10px'

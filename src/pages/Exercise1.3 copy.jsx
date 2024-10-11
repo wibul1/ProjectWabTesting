@@ -27,101 +27,95 @@ const Exercise1_3 = () => {
     const navigate = useNavigate();
     const totalScore1 = parseInt(localStorage.getItem('totalScore1')) || 0;
 
+    // ฟังก์ชันสำหรับตรวจสอบอายุและผลลัพธ์ที่ถูกต้อง
+    const checkAgeGroup = (age) => {
+        const ageNum = parseInt(age);
+        if (isNaN(ageNum) || ageNum < 0 || ageNum > 100) return 'Invalid';
+        if (ageNum >= 0 && ageNum <= 12) return 'Child';
+        if (ageNum >= 13 && ageNum <= 19) return 'Teenager';
+        if (ageNum >= 20 && ageNum <= 100) return 'Adult';
+        return 'Invalid';
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
     
-        let sumScore = 0;
-        const incorrectAnswers = []; // เก็บคำตอบที่ผิด
-        const correctAnswers = [];   // เก็บคำตอบที่ถูกต้อง
+        let newScore = 0;
     
-        // ฟังก์ชันในการตรวจสอบตาม Expected Result ที่ส่งมา และคืนค่าคำอธิบาย
-        const checkExpectedResult = (inputAge, expectedResult) => {
-            const ageNum = parseInt(inputAge);
-
-            // เงื่อนไขตาม expectedResult พร้อมคำอธิบาย
-            switch (expectedResult) {
-                case 'InvalidAge':
-                    return { isCorrect: ageNum <= 0 || ageNum > 100, correctAnswer: "มากกว่า 0 และน้อยกว่า 100" };
-                case 'Child':
-                    return { isCorrect: ageNum >= 0 && ageNum <= 12, correctAnswer: "อยู่ระหว่าง 1-12" };
-                case 'Teenager':
-                    return { isCorrect: ageNum >= 13 && ageNum <= 19, correctAnswer: "อยู่ระหว่าง 13-19" };
-                case 'Adult':
-                    return { isCorrect: ageNum >= 20 && ageNum <= 100, correctAnswer: "อยู่ระหว่าง 20-100" };
-                case 'ChildInvalidOver':
-                    return { isCorrect: ageNum > 12, correctAnswer: "มากกว่า 12" };
-                case 'TeenagerInvalid':
-                    return { isCorrect: ageNum < 13, correctAnswer: "น้อยกว่า 13" };
-                case 'TeenagerInvalidOver':
-                    return { isCorrect: ageNum > 19, correctAnswer: "มากกว่า 19" };
-                case 'AdultInvalid':
-                    return { isCorrect: ageNum < 20, correctAnswer: "น้อยกว่า 20" };
-                default:
-                    return { isCorrect: false, correctAnswer: "ไม่ทราบช่วงอายุที่ถูกต้อง" };
-            }
-        };
+        // ตรวจสอบแต่ละกรณี
+        if (expectedResult1 === 'ChildInvalid' && parseInt(inputAge1) < 0) {
+            newScore += 2;
+        } else if (checkAgeGroup(inputAge1) === expectedResult1) {
+            newScore += 2;
+        }
     
-        // ฟังก์ชันเช็คและเก็บคำตอบที่ถูกและผิด
-        const checkAndStore = (inputAge, expectedResult, expectedText, index, group) => {
-            const { isCorrect, correctAnswer } = checkExpectedResult(inputAge, expectedResult);
-            const userAnswer = inputAge;
-
-            if (isCorrect) {
-                sumScore += 2;
-                correctAnswers.push({
-                    group,
-                    index,
-                    userAnswer,
-                    correctAnswer,
-                });
-            } else {
-                incorrectAnswers.push({
-                    group,
-                    index,
-                    userAnswer,
-                    correctAnswer,
-                    explanation: `Expected '${expectedText}' but got '${userAnswer}'`
-                });
-            }
-        };
-
-        // เรียกฟังก์ชัน checkAndStore สำหรับแต่ละ input พร้อมเพิ่ม index และ group
-        checkAndStore(inputAge1, expectedResult1, "Expected Child", 1, "Group A");
-        checkAndStore(inputAge2, expectedResult2, "Expected Teenager", 2, "Group A");
-        checkAndStore(inputAge3, expectedResult3, "Expected ChildInvalidOver", 3, "Group A");
-        checkAndStore(inputAge4, expectedResult4, "Expected TeenagerInvalid", 4, "Group B");
-        checkAndStore(inputAge5, expectedResult5, "Expected Teenager", 5, "Group B");
-        checkAndStore(inputAge6, expectedResult6, "Expected TeenagerInvalidOver", 6, "Group B");
-        checkAndStore(inputAge7, expectedResult7, "Expected AdultInvalid", 7, "Group C");
-        checkAndStore(inputAge8, expectedResult8, "Expected Adult", 8, "Group C");
-        checkAndStore(inputAge9, expectedResult9, "Expected AdultInvalidOver", 9, "Group C");
-
+        if (expectedResult2 === 'Child' && parseInt(inputAge2) < 0) {
+            newScore += 2;
+        } else if (checkAgeGroup(inputAge2) === expectedResult2) {
+            newScore += 2;
+        }
     
-        setScore(sumScore);
+        if (expectedResult3 === 'ChildInvalidOver' && parseInt(inputAge3) < 0) {
+            newScore += 2;
+        } else if (checkAgeGroup(inputAge3) === expectedResult3) {
+            newScore += 2;
+        }
     
-        if (sumScore < 18) {
+        if (expectedResult4 === 'TeenagerInvalid' && parseInt(inputAge4) < 0) {
+            newScore += 2;
+        } else if (checkAgeGroup(inputAge4) === expectedResult4) {
+            newScore += 2;
+        }
+    
+        if (expectedResult5 === 'Teenager' && parseInt(inputAge5) < 0) {
+            newScore += 2;
+        } else if (checkAgeGroup(inputAge5) === expectedResult5) {
+            newScore += 2;
+        }
+    
+        if (expectedResult6 === 'TeenagerInvalidOver' && parseInt(inputAge6) < 0) {
+            newScore += 2;
+        } else if (checkAgeGroup(inputAge6) === expectedResult6) {
+            newScore += 2;
+        }
+    
+        if (expectedResult7 === 'AdultInvalid' && parseInt(inputAge7) < 0) {
+            newScore += 2;
+        } else if (checkAgeGroup(inputAge7) === expectedResult7) {
+            newScore += 2;
+        }
+    
+        if (expectedResult8 === 'Adult' && parseInt(inputAge8) < 0) {
+            newScore += 2;
+        } else if (checkAgeGroup(inputAge8) === expectedResult8) {
+            newScore += 2;
+        }
+    
+        if (expectedResult9 === 'AdultInvalidOver' && parseInt(inputAge9) < 0) {
+            newScore += 2;
+        } else if (checkAgeGroup(inputAge9) === expectedResult9) {
+            newScore += 2;
+        }
+    
+        setScore(newScore);
+    
+        if (newScore < 18) {
             setHint('ลองตรวจสอบผลลัพธ์ที่คาดหวังใหม่อีกครั้ง');
         } else {
             setHint('คุณตอบถูกทั้งหมดแล้ว!');
         }
     
-        // บันทึกคะแนนรวมจากข้อ 1.2 และ 1.3
-        const updatedScore = totalScore1 + sumScore;
+        // คำนวณคะแนนรวมจากข้อ 1.2 และ 1.3
+        const previousScore =  totalScore1 + newScore;
     
-        // เก็บข้อมูลลงใน LocalStorage
-        localStorage.setItem('totalScore1', updatedScore);
+        // บันทึกคะแนนรวมลงใน LocalStorage
+        localStorage.setItem('totalScore1', previousScore);
     
-        // นำทางไปยังหน้าผลลัพธ์พร้อมส่งคะแนนรวมและคำตอบที่ถูก/ผิด
-        navigate('/result', { 
-            state: { 
-                score: sumScore, 
-                incorrectAnswers, 
-                correctAnswers,
-                nextPage: '/'
-            } 
-        });
+        // นำทางไปยังหน้าผลลัพธ์พร้อมส่งคะแนนรวม
+        navigate('/result', { state: { score: newScore, nextPage: '/' } });
     };
     
+
     return (
         <div style={styles.container}>
             <div style={styles.headerContainer}>
@@ -141,7 +135,7 @@ const Exercise1_3 = () => {
                     3. Adult (20 ปีขึ้นไป)
                     <br />
                     โปรแกรมนี้รับค่าอายุเป็นจำนวนเต็มระหว่าง 0 ถึง 100 ปี <br />
-                    หากค่าไม่อยู่ในช่วงนี้จะถือว่าเป็นค่าไม่ถูกต้อง (Invalid age).
+                    หากค่าไม่อยู่ในช่วงนี้จะถือว่าเป็นค่าไม่ถูกต้อง (Invalid).
                 </p>
             </div>
             <div style={styles.headerContainer}>
@@ -182,7 +176,7 @@ const Exercise1_3 = () => {
                                     <option value="TeenagerInvalidOver">Teenager Invalid มากกว่า</option>
                                     <option value="Teenager">Teenager Valid </option>
                                     <option value="AdultInvalid">Adult Invalid น้อยกว่า</option>
-                                    <option value="InvalidAge">Invalid age</option>
+                                    <option value="AdultInvalidOver">Invalid age</option>
                                     <option value="Adult">Adult Valid</option>
                                 </select>
                             </td>
@@ -205,14 +199,16 @@ const Exercise1_3 = () => {
                                     style={styles.input}
                                 >
                                     <option value="">Select</option>
+                                    <option value="ChildInvalid">Child Invalid น้อยกว่า</option>
                                     <option value="ChildInvalidOver">Child Invalid มากกว่า</option>
                                     <option value="Child">Child Valid</option>
                                     <option value="TeenagerInvalid">Teenager Invalid น้อยกว่า</option>
                                     <option value="TeenagerInvalidOver">Teenager Invalid มากกว่า</option>
                                     <option value="Teenager">Teenager Valid </option>
                                     <option value="AdultInvalid">Adult Invalid น้อยกว่า</option>
-                                    <option value="InvalidAge">Invalid age</option>
+                                    <option value="AdultInvalidOver">Adult Invalid มากกว่า</option>
                                     <option value="Adult">Adult Valid</option>
+                                    {/* <option value="Error">Error</option> */}
                                 </select>
                             </td>
                         </tr>
@@ -234,14 +230,16 @@ const Exercise1_3 = () => {
                                     style={styles.input}
                                 >
                                     <option value="">Select</option>
+                                    <option value="ChildInvalid">Child Invalid น้อยกว่า</option>
                                     <option value="ChildInvalidOver">Child Invalid มากกว่า</option>
                                     <option value="Child">Child Valid</option>
                                     <option value="TeenagerInvalid">Teenager Invalid น้อยกว่า</option>
                                     <option value="TeenagerInvalidOver">Teenager Invalid มากกว่า</option>
                                     <option value="Teenager">Teenager Valid </option>
                                     <option value="AdultInvalid">Adult Invalid น้อยกว่า</option>
-                                    <option value="InvalidAge">Invalid age</option>
+                                    <option value="AdultInvalidOver">Adult Invalid มากกว่า</option>
                                     <option value="Adult">Adult Valid</option>
+                                    {/* <option value="Error">Error</option> */}
                                 </select>
                             </td>
                         </tr>
@@ -263,14 +261,16 @@ const Exercise1_3 = () => {
                                     style={styles.input}
                                 >
                                     <option value="">Select</option>
+                                    <option value="ChildInvalid">Child Invalid น้อยกว่า</option>
                                     <option value="ChildInvalidOver">Child Invalid มากกว่า</option>
                                     <option value="Child">Child Valid</option>
                                     <option value="TeenagerInvalid">Teenager Invalid น้อยกว่า</option>
                                     <option value="TeenagerInvalidOver">Teenager Invalid มากกว่า</option>
                                     <option value="Teenager">Teenager Valid </option>
                                     <option value="AdultInvalid">Adult Invalid น้อยกว่า</option>
-                                    <option value="InvalidAge">Invalid age</option>
+                                    <option value="AdultInvalidOver">Adult Invalid มากกว่า</option>
                                     <option value="Adult">Adult Valid</option>
+                                    {/* <option value="Error">Error</option> */}
                                 </select>
                             </td>
                         </tr>
@@ -292,14 +292,16 @@ const Exercise1_3 = () => {
                                     style={styles.input}
                                 >
                                     <option value="">Select</option>
+                                    <option value="ChildInvalid">Child Invalid น้อยกว่า</option>
                                     <option value="ChildInvalidOver">Child Invalid มากกว่า</option>
                                     <option value="Child">Child Valid</option>
                                     <option value="TeenagerInvalid">Teenager Invalid น้อยกว่า</option>
                                     <option value="TeenagerInvalidOver">Teenager Invalid มากกว่า</option>
                                     <option value="Teenager">Teenager Valid </option>
                                     <option value="AdultInvalid">Adult Invalid น้อยกว่า</option>
-                                    <option value="InvalidAge">Invalid age</option>
+                                    <option value="AdultInvalidOver">Adult Invalid มากกว่า</option>
                                     <option value="Adult">Adult Valid</option>
+                                    {/* <option value="Error">Error</option> */}
                                 </select>
                             </td>
                         </tr>
@@ -321,14 +323,16 @@ const Exercise1_3 = () => {
                                     style={styles.input}
                                 >
                                     <option value="">Select</option>
+                                    <option value="ChildInvalid">Child Invalid น้อยกว่า</option>
                                     <option value="ChildInvalidOver">Child Invalid มากกว่า</option>
                                     <option value="Child">Child Valid</option>
                                     <option value="TeenagerInvalid">Teenager Invalid น้อยกว่า</option>
                                     <option value="TeenagerInvalidOver">Teenager Invalid มากกว่า</option>
                                     <option value="Teenager">Teenager Valid </option>
                                     <option value="AdultInvalid">Adult Invalid น้อยกว่า</option>
-                                    <option value="InvalidAge">Invalid age</option>
+                                    <option value="AdultInvalidOver">Adult Invalid มากกว่า</option>
                                     <option value="Adult">Adult Valid</option>
+                                    {/* <option value="Error">Error</option> */}
                                 </select>
                             </td>
                         </tr>
@@ -350,14 +354,16 @@ const Exercise1_3 = () => {
                                     style={styles.input}
                                 >
                                     <option value="">Select</option>
+                                    <option value="ChildInvalid">Child Invalid น้อยกว่า</option>
                                     <option value="ChildInvalidOver">Child Invalid มากกว่า</option>
                                     <option value="Child">Child Valid</option>
                                     <option value="TeenagerInvalid">Teenager Invalid น้อยกว่า</option>
                                     <option value="TeenagerInvalidOver">Teenager Invalid มากกว่า</option>
                                     <option value="Teenager">Teenager Valid </option>
                                     <option value="AdultInvalid">Adult Invalid น้อยกว่า</option>
-                                    <option value="InvalidAge">Invalid age</option>
+                                    <option value="AdultInvalidOver">Adult Invalid มากกว่า</option>
                                     <option value="Adult">Adult Valid</option>
+                                    {/* <option value="Error">Error</option> */}
                                 </select>
                             </td>
                         </tr>
@@ -379,14 +385,16 @@ const Exercise1_3 = () => {
                                     style={styles.input}
                                 >
                                     <option value="">Select</option>
+                                    <option value="ChildInvalid">Child Invalid น้อยกว่า</option>
                                     <option value="ChildInvalidOver">Child Invalid มากกว่า</option>
                                     <option value="Child">Child Valid</option>
                                     <option value="TeenagerInvalid">Teenager Invalid น้อยกว่า</option>
                                     <option value="TeenagerInvalidOver">Teenager Invalid มากกว่า</option>
                                     <option value="Teenager">Teenager Valid </option>
                                     <option value="AdultInvalid">Adult Invalid น้อยกว่า</option>
-                                    <option value="InvalidAge">Invalid age</option>
+                                    <option value="AdultInvalidOver">Adult Invalid มากกว่า</option>
                                     <option value="Adult">Adult Valid</option>
+                                    {/* <option value="Error">Error</option> */}
                                 </select>
                             </td>
                         </tr>
@@ -408,14 +416,16 @@ const Exercise1_3 = () => {
                                     style={styles.input}
                                 >
                                     <option value="">Select</option>
+                                    <option value="ChildInvalid">Child Invalid น้อยกว่า</option>
                                     <option value="ChildInvalidOver">Child Invalid มากกว่า</option>
                                     <option value="Child">Child Valid</option>
                                     <option value="TeenagerInvalid">Teenager Invalid น้อยกว่า</option>
                                     <option value="TeenagerInvalidOver">Teenager Invalid มากกว่า</option>
                                     <option value="Teenager">Teenager Valid </option>
                                     <option value="AdultInvalid">Adult Invalid น้อยกว่า</option>
-                                    <option value="InvalidAge">Invalid age</option>
+                                    <option value="AdultInvalidOver">Adult Invalid มากกว่า</option>
                                     <option value="Adult">Adult Valid</option>
+                                    {/* <option value="Error">Error</option> */}
                                 </select>
                             </td>
                         </tr>
@@ -432,7 +442,7 @@ const styles = {
     container: {
         backgroundColor: '#f5f5f5',
         padding: '20px',
-        maxWidth: '80%',
+        maxWidth: '1200px',
         margin: 'auto',
         borderRadius: '10px',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',

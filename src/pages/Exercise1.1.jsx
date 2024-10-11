@@ -12,7 +12,9 @@ const Exercise1_1 = () => {
     input5: ''
   });
   const [score, setScore] = useState(0);
-
+  const [incorrectAnswers, setIncorrectAnswers] = useState([]); // บันทึกคำตอบที่ผิดพร้อมกับคำเฉลย
+  const [correctAnswersList, setCorrectAnswersList] = useState([]); // บันทึกคำตอบที่ถูกต้อง
+  
   const correctAnswers = {
     input0: 'scanf',
     input1: 'if',
@@ -32,20 +34,31 @@ const Exercise1_1 = () => {
 
   const handleSubmit = () => {
     let newScore = 0;
+    const incorrect = [];
+    const correct = [];
+
     Object.keys(correctAnswers).forEach((key) => {
       if (inputValues[key].trim() === correctAnswers[key]) {
         newScore += 2; // ให้คะแนน 2 คะแนนต่อคำตอบที่ถูกต้อง
+        correct.push({ question: key, userAnswer: inputValues[key] });
+      } else {
+        incorrect.push({ question: key, userAnswer: inputValues[key], correctAnswer: correctAnswers[key] });
       }
     });
     
     // ดึงคะแนนสะสมก่อนหน้านี้จาก LocalStorage
     const previousScore = parseInt(localStorage.getItem('totalScore') || '0', 10);
-  
-    // บันทึกคะแนนรวมใหม่ลงใน LocalStorage
-    localStorage.setItem('totalScore', previousScore + newScore);
     
+    // บันทึกคะแนนรวมใหม่ลงใน LocalStorage
+    localStorage.setItem('totalScore1', previousScore + newScore);
+    localStorage.setItem('incorrectAnswers1', JSON.stringify(incorrect)); // เก็บคำตอบที่ผิด
+    localStorage.setItem('correctAnswers1', JSON.stringify(correct)); // เก็บคำตอบที่ถูก
+
     setScore(newScore);
-    navigate('/result', { state: { score: newScore, nextPage: '/Exercise1.2' ,totalScore: newScore} });
+    setIncorrectAnswers(incorrect);
+    setCorrectAnswersList(correct);
+    
+    navigate('/result', { state: { score: newScore, incorrectAnswers: incorrect, correctAnswers: correct, nextPage: '/Exercise1.2', totalScore1: newScore } });
   };
   
 
@@ -56,27 +69,25 @@ const Exercise1_1 = () => {
         <div style={styles.scoreBox}>Score 0</div>
       </div>
       <h3  style={{fontSize: '40px',fontFamily: 'Arial, sans-serif'}}>ข้อ 1.1 Equivalence Partitioning</h3>
-      <div style={styles.container2}>
-        <div style={styles.leftSide}>
           <div style={styles.question}>
             <h3 style={{fontSize: '40px',fontFamily: 'Arial, sans-serif'}}>Requirement</h3>
             <p>
               โปรแกรมหนึ่งรับค่าอินพุตเป็นอายุของบุคคลและจะแยกบุคคลออกเป็น 3 กลุ่มตามอายุ:
               <br />
-              1. เด็ก (0 - 12 ปี)
+              1. Child (0 - 12 ปี)
               <br />
-              2. วัยรุ่น (13 - 19 ปี)
+              2. Teenager (13 - 19 ปี)
               <br />
-              3. ผู้ใหญ่ (20 ปีขึ้นไป)
+              3. Adult (20 ปีขึ้นไป)
               <br />
               โปรแกรมนี้รับค่าอายุเป็นจำนวนเต็มระหว่าง 0 ถึง 100 ปี <br />
               หากค่าไม่อยู่ในช่วงนี้จะถือว่าเป็นค่าไม่ถูกต้อง (Invalid).
             </p>
-            <p> : ให้เติมคำจากโค้ดที่เว้นช่องว่างให้ แล้วกด Submit</p>
           </div>
-          <button style={styles.hintButton}>คำใบ้</button>
-        </div>
-        <div style={styles.rightSide}>
+          <div style={styles.headerContainer}>
+            <h1 style={styles.description}> คำอธิบาย : ให้เติมคำจากโค้ดที่เว้นช่องว่างให้ แล้วกด Submit </h1>
+            <button style={styles.hintButton}>คำใบ้</button>
+          </div>
           <div style={styles.codeBox}>
             <p>#include &#60;stdio.h&#62;</p>
             <p>int main() &#123;</p>
@@ -86,21 +97,16 @@ const Exercise1_1 = () => {
             <p>&nbsp;&nbsp;<input type="text" name="input1" value={inputValues.input1} onChange={handleInputChange} style={styles.input} /> (age &#60; 0 || age &#62; 100) &#123; </p>
             <p>&nbsp;&nbsp;&nbsp;&nbsp;printf("Invalid age.");</p>
             <p>&nbsp;&nbsp;&#125;  else if (<input type="text" name="input2" value={inputValues.input2} onChange={handleInputChange} style={styles.input} /> &#62;= 0 && <input type="text" name="input3" value={inputValues.input3} onChange={handleInputChange} style={styles.input} /> &#60;= 12)  &#123;</p>
-            <p>&nbsp;&nbsp;&nbsp;&nbsp;printf("This person is a Child.");</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;printf("Child Valid");</p>
             <p>&nbsp;&nbsp;&#125;  else if(age &#62; 12 && age &#60;= 19) &#123; </p>
-            <p>&nbsp;&nbsp;&nbsp;&nbsp;printf("This person is a Teenager.");</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;printf("Teenager Valid");</p>
             <p>&nbsp;&nbsp;&#125;  <input type="text" name="input4" value={inputValues.input4} onChange={handleInputChange} style={styles.input} /> &#123;  </p>
-            <p>&nbsp;&nbsp;&nbsp;&nbsp;printf("This person is an Adult.");</p>
+            <p>&nbsp;&nbsp;&nbsp;&nbsp;printf("Adult Valid.");</p>
             <p>&nbsp;&nbsp;&#125;</p>
             <p>&nbsp;&nbsp;<input type="text" name="input5" value={inputValues.input5} onChange={handleInputChange} style={styles.input} /> 0;</p>
             <p>&#125;</p>
           </div>
           <button style={styles.submitButton} onClick={handleSubmit}>Submit</button>
-
-        </div>
-
-      </div>
-      
     </div>
   );
 };
@@ -113,20 +119,18 @@ const styles = {
     margin: 'auto',
     borderRadius: '10px',
   },
-  // container2: {
-  //   display: 'flex',
-  //   flexDirection: 'row',
-  //   fontFamily: 'Arial, sans-serif',
-  //   padding: '20px',
-  //   // backgroundColor: '#f5f5f5',
-  // },
   headerContainer: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: '10px',
   },
-
+  description: {
+    padding: '10px 20px',
+    borderRadius: '5px',
+    fontSize: '30px',
+    fontFamily: 'Arial, sans-serif',
+  },
   header: {
     
     color: '#0a3d3d',
@@ -135,21 +139,6 @@ const styles = {
     padding: '0px',
 
   },
-  // leftSide: {
-  //   flex: 2,
-  //   padding: '20px',
-  //   // backgroundColor: '#e0e0e0',
-  //   borderRadius: '10px',
-  //   marginRight: '20px',
-  //   textAlign: 'left',
-  // },
-  // rightSide: {
-  //   flex: 3,
-  //   padding: '20px',
-  //   // backgroundColor: '#ffffff',
-  //   borderRadius: '10px',
-  //   textAlign: 'left',
-  // },
   scoreBox: {
     backgroundColor: '#0a3d3d',
     color: 'white',

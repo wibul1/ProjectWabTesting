@@ -6,41 +6,70 @@ const Exercise3_5 = () => {
   const { score: previousScore = 0 } = location.state || {};
   const [selectedAnswer, setSelectedAnswer] = useState('');
   const navigate = useNavigate();
+  const [newScore, setScore] = useState(0);
+  const totalScore3 = parseInt(localStorage.getItem('totalScore3')) || 0;
+  const correctAnswer = '2'; // คำตอบที่ถูกต้องคือ '2'
 
   const handleSubmit = () => {
-    let newScore = previousScore;
+    let sumScore = 0;
+    const incorrect = [];
+    const correct = [];
 
     // ตรวจสอบว่าคำตอบถูกหรือไม่
-    if (selectedAnswer === '2') { // เปลี่ยนค่าตามคำตอบที่ถูกต้อง
-      newScore += 2;
+    if (selectedAnswer === correctAnswer) {
+      sumScore += 2;
+      correct.push({ question: '3.5', userAnswer: selectedAnswer, correctAnswer });
+    } else {
+      incorrect.push({ question: '3.5', userAnswer: selectedAnswer, correctAnswer });
     }
 
-    // เก็บคะแนนใน localStorage และนำไปสู่หน้าผลลัพธ์
-    localStorage.setItem('totalScore', newScore);
-    navigate('/result', { state: { score: newScore, nextPage: '/' } });
+    const updatedScore = totalScore3 + sumScore;
+    localStorage.setItem('totalScore3', updatedScore);
+
+     // เก็บข้อมูลคำตอบที่ถูกและผิดใน localStorage
+     localStorage.setItem('incorrectAnswers3', JSON.stringify(incorrect));
+     localStorage.setItem('correctAnswers3', JSON.stringify(correct));
+
+    // นำไปสู่หน้าผลลัพธ์
+    navigate('/result', {
+      state: {
+        score: sumScore,
+        incorrectAnswers: incorrect,
+        correctAnswers: correct,
+        nextPage: '/', 
+      }
+    });
   };
 
   // ฟังก์ชันเลือกสีตามว่าปุ่มถูกเลือกหรือไม่
   const getButtonStyle = (answer) => ({
-    backgroundColor: selectedAnswer === answer ? '#2c82c9' : '#0a3d62',
+    backgroundColor: selectedAnswer === answer ? '#dbe6c1' : '#0a3d3d',
     color: 'white',
     padding: '10px',
     border: 'none',
     borderRadius: '5px',
     cursor: 'pointer',
     textAlign: 'left',
+    fontSize: '25px',
+    fontFamily: 'Arial, sans-serif',
   });
 
   return (
     <div style={styles.container}>
       <div style={styles.headerContainer}>
                 <h1 style={styles.header}>Software Testing Training</h1>
-                <div style={styles.scoreBox}>Score: {previousScore}</div> 
+                <div style={styles.scoreBox}>Score: {totalScore3}</div> 
       </div>
       <h3  style={{fontSize: '40px',fontFamily: 'Arial, sans-serif'}}>ข้อ 3.5 Basis Path Testing</h3>
       <div style={styles.container2}>
         <div style={styles.leftSide}>
-          <div style={styles.question}>
+          
+          <img src="https://firebasestorage.googleapis.com/v0/b/project-d9486.appspot.com/o/L%2F1.png?alt=media&token=3a0d29c7-a1bd-4cef-9b8d-972cf342a024" alt="Table" style={styles.image} />
+        </div>
+
+        {/* Right Side - Code and Answers */}
+        <div style={styles.rightSide}>
+        <div style={styles.question}>
                   <h3 style={{fontSize: '40px',fontFamily: 'Arial, sans-serif'}}>Requirement</h3>
                   <p>
                 ให้โปรแกรมรับอินพุตเป็นจำนวนเต็ม 3 ค่า a, b, และ c <br/>
@@ -53,13 +82,11 @@ const Exercise3_5 = () => {
                 6. ถ้า a &lt; c และ b &lt; c ให้คำนวณผลลัพธ์เป็น a - b + c<br/>
                 7. หากไม่ตรงกับเงื่อนไขใด ๆ ข้างต้น ให้คำนวณผลลัพธ์เป็น a + b * c<br/>
             </p>
-                  <p> : ให้เลือกข้อที่คิดว่าเป็นจุดผิดพลาดของระบบ แล้วกด Submit</p>
+            <div style={styles.headerContainer}>
+              <h1 style={styles.description}> คำอธิบาย : ให้เลือกข้อที่คิดว่าเป็นจุดผิดพลาดของระบบ แล้วกด Submit</h1>
+              <button style={styles.hintButton}>คำใบ้</button>
+            </div>
           </div>
-          <img src="https://firebasestorage.googleapis.com/v0/b/project-d9486.appspot.com/o/L%2F1.png?alt=media&token=3a0d29c7-a1bd-4cef-9b8d-972cf342a024" alt="Table" style={styles.image} />
-        </div>
-
-        {/* Right Side - Code and Answers */}
-        <div style={styles.rightSide}>
         <pre style={styles.codeBlock}>
     {`int main() {
       int a, b, c, result;
@@ -91,7 +118,7 @@ const Exercise3_5 = () => {
   }`}
   </pre>
 
-          <h3>คำใบ้</h3>
+  <button style={styles.hintButton}>คำใบ้</button>
           <div style={styles.options}>
             <button style={getButtonStyle('1')} onClick={() => setSelectedAnswer('1')}>
               1. Step 3 (b &gt; c)
@@ -178,7 +205,23 @@ const styles = {
     borderRadius: '10px',
     textAlign: 'left',
   },
-  
+  description: {
+    padding: '10px 20px',
+    borderRadius: '5px',
+    fontSize: '30px',
+    fontFamily: 'Arial, sans-serif',
+  },
+  hintButton: {
+    backgroundColor: '#0a3d3d',
+    color: 'white',
+    padding: '10px',
+    width: '180px',
+    borderRadius: '5px',
+    marginBottom: '15px',
+    cursor: 'pointer',
+    fontSize: '30px',
+    fontFamily: 'Arial, sans-serif',
+  },
   image: {
     width: '100%',
     borderRadius: '10px',
@@ -192,6 +235,8 @@ const styles = {
     whiteSpace: 'pre-wrap',
     fontSize: '14px',
     marginBottom: '20px',
+    fontSize: '25px',
+    fontFamily: 'Arial, sans-serif',
   },
   options: {
     display: 'flex',
@@ -206,6 +251,8 @@ const styles = {
     borderRadius: '5px',
     cursor: 'pointer',
     marginTop: '20px',
+    fontSize: '30px',
+    fontFamily: 'Arial, sans-serif',
   },
 };
 

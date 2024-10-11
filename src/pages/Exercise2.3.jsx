@@ -2,91 +2,130 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const Exercise2_3 = () => {
-    const location = useLocation();
-    const { score: previousScore = 0 } = location.state || {};
-    const [inputAge1, setInputAge1] = useState('');
-    const [inputAge2, setInputAge2] = useState('');
-    const [inputAge3, setInputAge3] = useState('');
-    const [inputAge4, setInputAge4] = useState('');
-    const [inputAge5, setInputAge5] = useState('');
-    const [inputAge6, setInputAge6] = useState('');
-    const [expectedResult1, setExpectedResult1] = useState('');
-    const [expectedResult2, setExpectedResult2] = useState('');
-    const [expectedResult3, setExpectedResult3] = useState('');
-    const [expectedResult4, setExpectedResult4] = useState('');
-    const [expectedResult5, setExpectedResult5] = useState('');
-    const [expectedResult6, setExpectedResult6] = useState('');
-    const [score, setScore] = useState(0);
-    const [hint, setHint] = useState('');
-    const navigate = useNavigate();
+  const location = useLocation();
+  const { score: previousScore = 0 } = location.state || {};
+  const [inputAge1, setInputAge1] = useState('');
+  const [inputAge2, setInputAge2] = useState('');
+  const [inputAge3, setInputAge3] = useState('');
+  const [inputAge4, setInputAge4] = useState('');
+  const [inputAge5, setInputAge5] = useState('');
+  const [inputAge6, setInputAge6] = useState('');
+  const [expectedResult1, setExpectedResult1] = useState('');
+  const [expectedResult2, setExpectedResult2] = useState('');
+  const [expectedResult3, setExpectedResult3] = useState('');
+  const [expectedResult4, setExpectedResult4] = useState('');
+  const [expectedResult5, setExpectedResult5] = useState('');
+  const [expectedResult6, setExpectedResult6] = useState('');
+  const [score, setScore] = useState(0);
+  const [hint, setHint] = useState('');
+  const navigate = useNavigate();
+  const totalScore2 = parseInt(localStorage.getItem('totalScore2')) || 0;
 
-    // ฟังก์ชันสำหรับคำนวณค่ากำลังสองและตรวจสอบเงื่อนไข
-    const calculateSquare = (inputValue) => {
-        const num = parseInt(inputValue);
+  // ฟังก์ชันสำหรับคำนวณค่ากำลังสองและตรวจสอบเงื่อนไข
+  const calculateSquare = (inputValue) => {
+    const num = parseInt(inputValue);
 
-        if (isNaN(num)) {
-            return 'Error';
-        }
+    if (isNaN(num)) {
+      return 'Error';
+    }
 
-        if (num === 0 || num === 101) {
-            return 'Error';
-        } else if (num >= 1 && num <= 100) {
-            return num * num;
-        } else {
-            return 'Error';
-        }
-    };
+    if (num === 0 || num === 101) {
+      return 'Error';
+    } else if (num >= 1 && num <= 100) {
+      return num * num;
+    } else {
+      return 'Error';
+    }
+  };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        
-        let newScore = 0;
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    let sumScore = 0;
+    const correctAnswers = [];
+    const incorrectAnswers = [];
 
-        // ตรวจสอบแต่ละกรณี
-        if (calculateSquare(inputAge1) === 'Error' && expectedResult1 === 'Error') {
-            newScore += 4;
-        }
-        if (calculateSquare(inputAge2) === 1 && expectedResult2 === '1') {
-            newScore += 4;
-        }
-        if (calculateSquare(inputAge3) === 4 && expectedResult3 === '4') {
-            newScore += 4;
-        }
-        if (calculateSquare(inputAge4) === 9801 && expectedResult4 === '9801') {
-            newScore += 4;
-        }
-        if (calculateSquare(inputAge5) === 10000 && expectedResult5 === '10000') {
-            newScore += 4;
-        }
-        if (calculateSquare(inputAge6) === 'Error' && expectedResult6 === 'Error') {
-            newScore += 4;
-        }
+    // ตรวจสอบแต่ละกรณี
+    const result1 = calculateSquare(inputAge1);
+    if (result1 === 'Error' && expectedResult1 === 'Error') {
+      sumScore += 4;
+      correctAnswers.push({ index: 1, userAnswer: inputAge1, correctAnswer: expectedResult1 });
+    } else {
+      incorrectAnswers.push({ index: 1, userAnswer: inputAge1, correctAnswer: expectedResult1 });
+    }
 
-        setScore(newScore);
+    const result2 = calculateSquare(inputAge2);
+    if (result2 === 1 && expectedResult2 === '1') {
+      sumScore += 4;
+      correctAnswers.push({ index: 2, userAnswer: inputAge2, correctAnswer: expectedResult2 });
+    } else {
+      incorrectAnswers.push({ index: 2, userAnswer: inputAge2, correctAnswer: expectedResult2 });
+    }
 
-        if (newScore < 24) {
-            setHint('ลองตรวจสอบผลลัพธ์ที่คาดหวังใหม่อีกครั้ง');
-        } else {
-            setHint('คุณตอบถูกทั้งหมดแล้ว!');
-        }
+    const result3 = calculateSquare(inputAge3);
+    if (result3 === 4 && expectedResult3 === '4') {
+      sumScore += 4;
+      correctAnswers.push({ index: 3, userAnswer: inputAge3, correctAnswer: expectedResult3 });
+    } else {
+      incorrectAnswers.push({ index: 3, userAnswer: inputAge3, correctAnswer: expectedResult3 });
+    }
 
-        // คำนวณคะแนนรวมจากข้อ 2.2 และ 2.3
-        const totalScore = previousScore + newScore;
+    const result4 = calculateSquare(inputAge4);
+    if (result4 === 9801 && expectedResult4 === '9801') {
+      sumScore += 4;
+      correctAnswers.push({ index: 4, userAnswer: inputAge4, correctAnswer: expectedResult4 });
+    } else {
+      incorrectAnswers.push({ index: 4, userAnswer: inputAge4, correctAnswer: expectedResult4 });
+    }
 
-        // บันทึกคะแนนรวมลงใน LocalStorage
-        localStorage.setItem('totalScore', totalScore);
+    const result5 = calculateSquare(inputAge5);
+    if (result5 === 10000 && expectedResult5 === '10000') {
+      sumScore += 4;
+      correctAnswers.push({ index: 5, userAnswer: inputAge5, correctAnswer: expectedResult5 });
+    } else {
+      incorrectAnswers.push({ index: 5, userAnswer: inputAge5, correctAnswer: expectedResult5 });
+    }
 
-        // นำทางไปยังหน้าผลลัพธ์พร้อมส่งคะแนนรวม
-        navigate('/result', { state: { score: totalScore, nextPage: '/' } });
-    };
+    const result6 = calculateSquare(inputAge6);
+    if (result6 === 'Error' && expectedResult6 === 'Error') {
+      sumScore += 4;
+      correctAnswers.push({ index: 6, userAnswer: inputAge6, correctAnswer: expectedResult6 });
+    } else {
+      incorrectAnswers.push({ index: 6, userAnswer: inputAge6, correctAnswer: expectedResult6 });
+    }
+
+    setScore(sumScore);
+
+    if (sumScore < 24) {
+      setHint('ลองตรวจสอบผลลัพธ์ที่คาดหวังใหม่อีกครั้ง');
+    } else {
+      setHint('คุณตอบถูกทั้งหมดแล้ว!');
+    }
+
+    // คำนวณคะแนนรวมจากข้อ 2.2 และ 2.3
+    const updatedScore = totalScore2 + sumScore;
+
+    // บันทึกคะแนนรวมลงใน LocalStorage
+    localStorage.setItem('totalScore2', updatedScore);
+
+    // นำทางไปยังหน้าผลลัพธ์พร้อมส่งคะแนนรวม
+    navigate('/result', {
+      state: {
+        score: sumScore,
+        correctAnswers: correctAnswers,
+        incorrectAnswers: incorrectAnswers,
+        nextPage: '/',
+      },
+    });
+  };
 
     return (
         <div style={styles.container}>
             <div style={styles.headerContainer}>
                 <h1 style={styles.header}>Software Testing Training</h1>
-                <div style={styles.scoreBox}>Score: {previousScore}</div> 
+                <div style={styles.scoreBox}>Score: {totalScore2}</div> 
             </div>
-      <h3  style={{fontSize: '40px',fontFamily: 'Arial, sans-serif'}}>ข้อ 2.3 Boundary Value Analysis</h3>
+            <h3  style={{fontSize: '40px',fontFamily: 'Arial, sans-serif'}}>ข้อ 2.3 Boundary Value Analysis</h3>
             <div style={styles.question}>
                 <h3 style={{fontSize: '40px',fontFamily: 'Arial, sans-serif'}}>Requirement</h3>
                 <p>
@@ -94,11 +133,11 @@ const Exercise2_3 = () => {
                 หากค่าที่กรอกอยู่นอกช่วง 1 ถึง 100 โปรแกรมจะแสดงข้อความว่า "Error" <br/>
                 โปรแกรมนี้ทำงานกับตัวเลขจำนวนเต็มเท่านั้น
                 </p>
-                <p> : ให้ตอบค่าที่คิดว่า Testcase นั้นจะวิ่งไป แล้วกด Submit</p>
             </div>
-
-            <button style={styles.hintButton}>คำใบ้</button>
-
+            <div style={styles.headerContainer}>
+                <h1 style={styles.description}> คำอธิบาย : ให้ตอบค่าที่คิดว่า Testcase นั้นจะวิ่งไป แล้วกด Submit </h1>
+                <button style={styles.hintButton}>คำใบ้</button>
+            </div>
             <form onSubmit={handleSubmit}>
                 <table style={styles.table}>
                     <thead>
@@ -113,7 +152,7 @@ const Exercise2_3 = () => {
                             <td style={styles.th_td}>TC 01</td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={inputAge1} 
                                     onChange={(e) => setInputAge1(e.target.value)} 
                                     placeholder=""
@@ -134,7 +173,7 @@ const Exercise2_3 = () => {
                             <td style={styles.th_td}>TC 02</td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={inputAge2} 
                                     onChange={(e) => setInputAge2(e.target.value)} 
                                     placeholder=""
@@ -155,7 +194,7 @@ const Exercise2_3 = () => {
                             <td style={styles.th_td}>TC 03</td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={inputAge3} 
                                     onChange={(e) => setInputAge3(e.target.value)} 
                                     placeholder=""
@@ -176,7 +215,7 @@ const Exercise2_3 = () => {
                             <td style={styles.th_td}>TC 04</td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={inputAge4} 
                                     onChange={(e) => setInputAge4(e.target.value)} 
                                     placeholder=""
@@ -197,7 +236,7 @@ const Exercise2_3 = () => {
                             <td style={styles.th_td}>TC 05</td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={inputAge5} 
                                     onChange={(e) => setInputAge5(e.target.value)} 
                                     placeholder=""
@@ -218,7 +257,7 @@ const Exercise2_3 = () => {
                             <td style={styles.th_td}>TC 06</td>
                             <td style={styles.th_td}>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     value={inputAge6} 
                                     onChange={(e) => setInputAge6(e.target.value)} 
                                     placeholder=""
@@ -246,7 +285,7 @@ const Exercise2_3 = () => {
 
 const styles = {
     container: {
-        backgroundColor: '#f5f5f5',
+        backgroundColo2r: '#f5f5f5',
         padding: '20px',
         maxWidth: '90%',
         margin: 'auto',
@@ -282,6 +321,12 @@ const styles = {
         fontSize: '25px',
         fontFamily: 'Arial, sans-serif',
     },
+    description: {
+        padding: '10px 20px',
+        borderRadius: '5px',
+        fontSize: '30px',
+        fontFamily: 'Arial, sans-serif',
+      },
     hintButton: {
         backgroundColor: '#0a3d3d',
         color: '#fff',
