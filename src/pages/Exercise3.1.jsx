@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import HintPopup from '../components/HintPopup';
 
 const Exercise3_1 = () => {
   const navigate = useNavigate();
@@ -13,6 +14,12 @@ const Exercise3_1 = () => {
     input6: '',
     input7: '',
   });
+  const hints3_1 = [
+    "คำใบ้ 1: Exploratory Testing เกี่ยวข้องกับการทดสอบโดยไม่ใช้เอกสารหรือไม่?",
+    "คำใบ้ 2: การทดสอบนี้พึ่งพาทักษะของผู้ทดสอบมากหรือน้อย?",
+    "คำใบ้ 3: Exploratory Testing สามารถใช้ร่วมกับการทดสอบที่มีโครงสร้างได้หรือไม่?"
+  ];
+  
   const [score, setScore] = useState(0);
   const [incorrectAnswers, setIncorrectAnswers] = useState([]); // บันทึกคำตอบที่ผิดพร้อมกับคำเฉลย
   const [correctAnswersList, setCorrectAnswersList] = useState([]); // บันทึกคำตอบที่ถูกต้อง
@@ -90,7 +97,7 @@ const Exercise3_1 = () => {
       </div>
       <div style={styles.headerContainer}>
             <h1 style={styles.description}> คำอธิบาย : ให้เติมคำจากโค้ดที่เว้นช่องว่างให้ แล้วกด Submit</h1>
-            <button style={styles.hintButton}>คำใบ้</button>
+            <HintPopup hints={hints3_1} />
       </div>
 
       <div style={styles.codeBox}>

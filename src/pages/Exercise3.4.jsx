@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import HintPopup from '../components/HintPopup';
 
 const Exercise2_3 = () => {
     const location = useLocation();
@@ -49,6 +50,12 @@ const Exercise2_3 = () => {
         '1-2-8-10-12-13-15', 
         '1-2-8-10-12-14-15'
     ];
+    const hints3_4 = [
+        "คำใบ้ 1: Regression Testing ใช้เพื่อตรวจสอบอะไรในซอฟต์แวร์ที่เปลี่ยนแปลง?",
+        "คำใบ้ 2: การทดสอบซ้ำหลังจากการเปลี่ยนแปลงโค้ดคืออะไร?",
+        "คำใบ้ 3: คำสั่งที่ใช้สำหรับการตรวจสอบค่าซ้ำในภาษา C คืออะไร?"
+      ];
+      
     const handleSubmit = (e) => {
         e.preventDefault();
         
@@ -165,7 +172,7 @@ const Exercise2_3 = () => {
             </div>
             <div style={styles.headerContainer}>
                 <h1 style={styles.description}> คำอธิบาย : ให้ตอบค่าที่คิดว่า Testcase นั้นจะวิ่งไป แล้วกด Submit</h1>
-                <button style={styles.hintButton}>คำใบ้</button>
+                <HintPopup hints={hints3_4} />
             </div>
             <form onSubmit={handleSubmit}>
                 <table style={styles.table}>

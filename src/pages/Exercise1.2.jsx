@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate,useLocation  } from 'react-router-dom';
-
+import HintPopup from '../components/HintPopup';
 
 const Exercise1_2 = () => {
     const location = useLocation();
@@ -12,7 +12,11 @@ const Exercise1_2 = () => {
     // const [score, setScore] = useState(previousScore); // ตั้งคะแนนเริ่มต้น
   
     const navigate = useNavigate();
-  
+    const hints1_2 = [
+      "คำใบ้ 1: การตรวจสอบค่าขอบเขตบนและล่างของตัวเลขควรทำอย่างไร?",
+      "คำใบ้ 2: คุณสามารถใช้คำสั่งอะไรในการตรวจสอบค่าที่น้อยที่สุดและมากที่สุดใน C?",
+      "คำใบ้ 3: ค่าที่ไม่อยู่ในขอบเขตที่กำหนดจะถือเป็นค่าผิดพลาดหรือไม่?"
+    ];    
     const handleInputChange = (setter, values, index, value) => {
       const newValues = [...values];
       newValues[index] = value;
@@ -174,7 +178,7 @@ const Exercise1_2 = () => {
       </div>
       <div style={styles.headerContainer}>
             <h1 style={styles.description}> คำอธิบาย : ให้เติมค่าที่คิดว่าเป็น Invalid Valid แล้วกด Submit </h1>
-            <button style={styles.hintButton}>คำใบ้</button>
+            <HintPopup hints={hints1_2} />
           </div>
       <div style={styles.inputContainer}>
         <div style={styles.labelRow}>

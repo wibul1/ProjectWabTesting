@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import HintPopup from '../components/HintPopup';
 
 const Exercise2_2 = () => {
   const location = useLocation();
@@ -9,6 +10,12 @@ const Exercise2_2 = () => {
   const totalScore2 = parseInt(localStorage.getItem('totalScore2')) || 0;
 
   const navigate = useNavigate();
+  const hints2_2 = [
+    "คำใบ้ 1: Pairwise Testing ใช้สำหรับการทดสอบการรวมคู่ของอะไร?",
+    "คำใบ้ 2: การลดจำนวนการทดสอบทั้งหมดด้วยการทดสอบคู่ที่มีความเป็นไปได้เรียกว่าอะไร?",
+    "คำใบ้ 3: คำสั่งที่ใช้สำหรับการทดสอบเงื่อนไขคู่ในภาษา C คืออะไร?"
+  ];
+  
 
   const handleInputChange = (setter, values, index, value) => {
     const newValues = [...values];
@@ -73,7 +80,7 @@ const Exercise2_2 = () => {
       </div>
       <div style={styles.headerContainer}>
         <h1 style={styles.description}>คำอธิบาย: ให้เติมค่าที่คิดว่าอยู่ในช่วง min max แล้วกด Submit</h1>
-        <button style={styles.hintButton}>คำใบ้</button>
+        <HintPopup hints={hints2_2} />
       </div>
       <div style={styles.inputContainer}>
         <div style={styles.labelRow}>

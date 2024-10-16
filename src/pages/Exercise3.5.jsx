@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import HintPopup from '../components/HintPopup';
 
 const Exercise3_5 = () => {
   const location = useLocation();
@@ -9,6 +10,12 @@ const Exercise3_5 = () => {
   const [newScore, setScore] = useState(0);
   const totalScore3 = parseInt(localStorage.getItem('totalScore3')) || 0;
   const correctAnswer = '2'; // คำตอบที่ถูกต้องคือ '2'
+  const hints3_5 = [
+    "คำใบ้ 1: Performance Testing มุ่งเน้นที่การทดสอบสมรรถนะในด้านใด?",
+    "คำใบ้ 2: การวัดความเร็วหรือความสามารถของโปรแกรมควรใช้เครื่องมืออะไร?",
+    "คำใบ้ 3: คำสั่งที่ใช้สำหรับการวัดประสิทธิภาพของโปรแกรมใน C คืออะไร?"
+  ];
+  
 
   const handleSubmit = () => {
     let sumScore = 0;
@@ -84,7 +91,7 @@ const Exercise3_5 = () => {
             </p>
             <div style={styles.headerContainer}>
               <h1 style={styles.description}> คำอธิบาย : ให้เลือกข้อที่คิดว่าเป็นจุดผิดพลาดของระบบ แล้วกด Submit</h1>
-              <button style={styles.hintButton}>คำใบ้</button>
+              <HintPopup hints={hints3_5} />
             </div>
           </div>
         <pre style={styles.codeBlock}>

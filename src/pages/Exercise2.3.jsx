@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import HintPopup from '../components/HintPopup';
 
 const Exercise2_3 = () => {
   const location = useLocation();
@@ -20,6 +21,12 @@ const Exercise2_3 = () => {
   const [hint, setHint] = useState('');
   const navigate = useNavigate();
   const totalScore2 = parseInt(localStorage.getItem('totalScore2')) || 0;
+  const hints2_3 = [
+    "คำใบ้ 1: Use Case Testing มุ่งเน้นที่อะไรในระบบ?",
+    "คำใบ้ 2: การตรวจสอบการทำงานของระบบผ่านกรณีการใช้งานที่เป็นไปได้ต้องพิจารณาอะไรบ้าง?",
+    "คำใบ้ 3: เงื่อนไขที่ครอบคลุมกรณีการใช้งานที่หลากหลายในภาษา C ใช้คำสั่งใด?"
+  ];
+  
 
   // ฟังก์ชันสำหรับคำนวณค่ากำลังสองและตรวจสอบเงื่อนไข
   const calculateSquare = (inputValue) => {
@@ -136,7 +143,7 @@ const Exercise2_3 = () => {
             </div>
             <div style={styles.headerContainer}>
                 <h1 style={styles.description}> คำอธิบาย : ให้ตอบค่าที่คิดว่า Testcase นั้นจะวิ่งไป แล้วกด Submit </h1>
-                <button style={styles.hintButton}>คำใบ้</button>
+                <HintPopup hints={hints2_3} />
             </div>
             <form onSubmit={handleSubmit}>
                 <table style={styles.table}>

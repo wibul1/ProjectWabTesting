@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import HintPopup from '../components/HintPopup';
 
 const Exercise1_1 = () => {
   const navigate = useNavigate();
@@ -11,6 +12,11 @@ const Exercise1_1 = () => {
     input4: '',
     input5: ''
   });
+  const hints = [
+    "คำใบ้ 1: คำสั่งรับค่าจากผู้ใช้โดยทั่วไปใน C คืออะไร?",
+    "คำใบ้ 2: ตรวจสอบว่าค่าที่ผู้ใช้กรอกอยู่นอกช่วงหรือไม่โดยใช้คำสั่งใด?",
+    "คำใบ้ 3: ช่วงอายุของเด็กอยู่ในช่วงใด?"
+  ];
   const [score, setScore] = useState(0);
   const [incorrectAnswers, setIncorrectAnswers] = useState([]); // บันทึกคำตอบที่ผิดพร้อมกับคำเฉลย
   const [correctAnswersList, setCorrectAnswersList] = useState([]); // บันทึกคำตอบที่ถูกต้อง
@@ -86,7 +92,7 @@ const Exercise1_1 = () => {
           </div>
           <div style={styles.headerContainer}>
             <h1 style={styles.description}> คำอธิบาย : ให้เติมคำจากโค้ดที่เว้นช่องว่างให้ แล้วกด Submit </h1>
-            <button style={styles.hintButton}>คำใบ้</button>
+            <HintPopup hints={hints} />
           </div>
           <div style={styles.codeBox}>
             <p>#include &#60;stdio.h&#62;</p>
@@ -106,6 +112,7 @@ const Exercise1_1 = () => {
             <p>&nbsp;&nbsp;<input type="text" name="input5" value={inputValues.input5} onChange={handleInputChange} style={styles.input} /> 0;</p>
             <p>&#125;</p>
           </div>
+          
           <button style={styles.submitButton} onClick={handleSubmit}>Submit</button>
     </div>
   );

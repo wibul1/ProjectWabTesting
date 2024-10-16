@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import HintPopup from '../components/HintPopup';
 
 const Exercise2_1 = () => {
   const navigate = useNavigate();
@@ -21,7 +22,13 @@ const Exercise2_1 = () => {
     input3: '100',
     input4: '%d',
   };
+  const hints2_1 = [
+    "คำใบ้ 1: State Transition Testing เกี่ยวข้องกับการเปลี่ยนสถานะของอะไร?",
+    "คำใบ้ 2: แต่ละสถานะของโปรแกรมควรถูกตรวจสอบด้วยอะไร?",
+    "คำใบ้ 3: การยืนยันการเปลี่ยนสถานะในระบบเป็นอย่างไร?"
+  ];
 
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setInputValues({
@@ -77,7 +84,7 @@ const Exercise2_1 = () => {
       </div>
       <div style={styles.headerContainer}>
             <h1 style={styles.description}> คำอธิบาย : ให้เติมคำจากโค้ดที่เว้นช่องว่างให้ แล้วกด Submitt </h1>
-            <button style={styles.hintButton}>คำใบ้</button>
+            <HintPopup hints={hints2_1} />
       </div>
       <div style={styles.codeBox}>
         <p>#<input type="text" name="input0" value={inputValues.input0} onChange={handleInputChange} style={styles.input}/> &#60;stdio.h&#62;</p>

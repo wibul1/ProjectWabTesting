@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import HintPopup from '../components/HintPopup';
 
 const Exercise3_2 = () => {
   const location = useLocation();
@@ -17,6 +18,12 @@ const Exercise3_2 = () => {
     input5: '',
     input6: ''
   });
+  const hints3_2 = [
+    "คำใบ้ 1: Fault Injection Testing ใช้เพื่อทดสอบระบบภายใต้สถานการณ์อะไร?",
+    "คำใบ้ 2: การสร้างข้อผิดพลาดเทียมในระบบเพื่อทดสอบความยืดหยุ่นของระบบเรียกว่าอะไร?",
+    "คำใบ้ 3: คำสั่งที่สามารถใช้เพื่อจำลองข้อผิดพลาดในระบบคืออะไร?"
+  ];
+  
   const [incorrectAnswers, setIncorrectAnswers] = useState([]); // บันทึกคำตอบที่ผิดพร้อมกับคำเฉลย
   const [correctAnswersList, setCorrectAnswersList] = useState([]); // บันทึกคำตอบที่ถูกต้อง
 
@@ -107,7 +114,7 @@ const Exercise3_2 = () => {
             <h1 style={styles.description}> คำอธิบาย : จากโค้ดด้านบนอยากให้ใส่ตัวเลขเส้นทางไปแทนช่องที่เป็นภาษาอังกฤษ โดยใส่ที่ช่อง input ข้างๆ<br/>
             โดยแต่ละช่องจะมีบอกว่าต้องนี้อทนตัวไหนเช่น A....ตอบ 10 และสามารถดูว่าแต่ละเส้นทางมีตัวเลขอะไรบ้างได้ที่โค้ดด้านบน <br/>
             พอตอบครบแล้วกดSubmit </h1>
-            <button style={styles.hintButton}>คำใบ้</button>
+            <HintPopup hints={hints3_2} />
       </div>
       <div style={styles.container2}>
         <div style={styles.leftSide}>

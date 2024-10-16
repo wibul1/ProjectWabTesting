@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import HintPopup from '../components/HintPopup';
 
 const Exercise3_3 = () => {
   const location = useLocation();
@@ -10,6 +11,12 @@ const Exercise3_3 = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const totalScore3 = parseInt(localStorage.getItem('totalScore3')) || 0;
+  const hints3_3 = [
+    "คำใบ้ 1: Mutation Testing ทดสอบโดยการแก้ไขโค้ดเพื่อดูผลกระทบหรือไม่?",
+    "คำใบ้ 2: คำว่า 'mutation' ใน Mutation Testing หมายถึงการเปลี่ยนแปลงในส่วนไหนของโค้ด?",
+    "คำใบ้ 3: คำสั่งที่สามารถใช้เพื่อสร้าง mutation ในภาษา C คืออะไร?"
+  ];
+  
 
   const correctTotalPaths = 7;
   const correctPaths = [
@@ -120,7 +127,7 @@ const Exercise3_3 = () => {
             </p>
             <div style={styles.headerContainer}>
               <h1 style={styles.description}>คำอธิบาย: ต้องการให้ตอบถูกจำนวนเส้นทางที่เป็นไปได้ทั้งหมดและยกตัวอย่าง 3 เส้นทาง</h1>
-              <button style={styles.hintButton}>คำใบ้</button>
+              <HintPopup hints={hints3_3} />
             </div>
             <h3 style={{ fontSize: '30px', fontFamily: 'Arial, sans-serif' }}>คำตอบของคุณ</h3>
             <div style={{ fontSize: '30px', fontFamily: 'Arial, sans-serif' }}>ใส่จำนวนเส้นทางที่ถูกต้อง</div>
