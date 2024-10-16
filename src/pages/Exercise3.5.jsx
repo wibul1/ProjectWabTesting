@@ -64,7 +64,7 @@ const Exercise3_5 = () => {
       <div style={styles.container2}>
         <div style={styles.leftSide}>
           
-          <img src="https://firebasestorage.googleapis.com/v0/b/project-d9486.appspot.com/o/L%2F1.png?alt=media&token=3a0d29c7-a1bd-4cef-9b8d-972cf342a024" alt="Table" style={styles.image} />
+          <img src="https://firebasestorage.googleapis.com/v0/b/project-d9486.appspot.com/o/L%2F3.5.png?alt=media&token=8bd8c07e-763a-4d10-93e4-838322ca259e" alt="Table" style={styles.image} />
         </div>
 
         {/* Right Side - Code and Answers */}

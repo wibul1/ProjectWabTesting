@@ -175,7 +175,7 @@ const Exercise2_3 = () => {
                             <th style={styles.th}>Input A</th>
                             <th style={styles.th}>Input b</th>
                             <th style={styles.th}>Input c</th>
-                            <th style={styles.th}>Expected Results</th>
+                            <th style={styles.th}>Path</th>
                         </tr>
                     </thead>
                     <tbody>
