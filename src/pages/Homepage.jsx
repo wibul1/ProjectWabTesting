@@ -9,18 +9,20 @@ const Home = () => {
   const totalScore = totalScore1 + totalScore2 + totalScore3;
   
   let rank;
-  if (totalScore >= 80) {
+  if (totalScore >= 140) {
     rank = 'S';
-  } else if (totalScore >= 60 && totalScore < 80) {
+  } else if (totalScore >= 120 && totalScore < 140) {
     rank = 'A';
-  } else if (totalScore >= 40 && totalScore < 60) {
+  } else if (totalScore >= 100 && totalScore < 120) {
     rank = 'B';
-  } else if (totalScore >= 30 && totalScore < 40) {
+  } else if (totalScore >= 80 && totalScore < 100) {
     rank = 'C';
-  } else if (totalScore >= 20 && totalScore < 30) {
+  } else if (totalScore >= 60 && totalScore < 80) {
     rank = 'D';
+  } else if (totalScore >= 40 && totalScore < 60) {
+    rank = 'E';
   } else {
-    rank = 'F'; // เผื่อกรณีคะแนนน้อยกว่า 20
+    rank = 'F'; 
   }
   
   console.log(`Total Score: ${totalScore}, Rank: ${rank}`);
